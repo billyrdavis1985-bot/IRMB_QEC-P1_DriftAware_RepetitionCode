@@ -1,4 +1,4 @@
-"""QEC-P1 gate G1 — intervention distinctness between patch-selection policies.
+﻿"""QEC-P1 gate G1 â€” intervention distinctness between patch-selection policies.
 
 Answers, with ZERO QPU cost, the question that decides whether QEC-P1 can run:
 
@@ -27,7 +27,7 @@ POLICIES (both frozen; see prereg 3.2)
               cannot produce variance or tail statistics).
   P-archive : SAME instantaneous terms, PLUS a frozen temporal aggregation
               over every eligible cycle strictly BEFORE the selection point
-              (rolling, causal — never uses future information).
+              (rolling, causal â€” never uses future information).
 
 Lower score = better patch, matching qnn.rank_snapshots convention.
 
@@ -262,7 +262,7 @@ def analyse(snaps: list[dict], budget_windows: int, top_n: int) -> dict:
 
 
 def report(res: dict, budget_windows: int, sesoi: float) -> None:
-    print(f"\n{'='*68}\nQEC-P1 GATE G1 — INTERVENTION DISTINCTNESS\n{'='*68}")
+    print(f"\n{'='*68}\nQEC-P1 GATE G1 â€” INTERVENTION DISTINCTNESS\n{'='*68}")
     print(f"unique calibration cycles : {res['n_cycles']}")
     print(f"valid 5-qubit patches     : {res['n_patches']}")
     print(f"selection decisions       : {res['n_decisions']}")
@@ -288,9 +288,9 @@ def report(res: dict, budget_windows: int, sesoi: float) -> None:
           f"({sesoi/2:.4f}) during discordance")
     print("       -> requires Tier 1 noisy simulation; the score-space")
     print("          consequence above is a PROXY, not a logical-error delta.")
-    print(f"\nDISPOSITION: {'proceed to Tier 1 for the second G1 criterion'
-                           if c1 else 'REFRAME per prereg section 9 '
-                           '(convergence-dominated)'}")
+    disp = ("proceed to Tier 1 for the second G1 criterion" if c1
+            else "REFRAME per prereg section 9 (convergence-dominated)")
+    print("\nDISPOSITION: " + disp)
     print("Neither branch is a failure: convergence is a reportable finding")
     print("about intervention distinctness on this device.\n")
 
@@ -315,7 +315,7 @@ def self_test() -> None:
     res = analyse(cycles, budget_windows=4, top_n=6)
     report(res, 4, 0.010)
     assert res["n_patches"] > 0 and res["n_decisions"] == 11
-    print("self-test OK — enumeration, causal history, and gate logic run.\n")
+    print("self-test OK â€” enumeration, causal history, and gate logic run.\n")
 
 
 def main() -> None:
@@ -358,3 +358,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
