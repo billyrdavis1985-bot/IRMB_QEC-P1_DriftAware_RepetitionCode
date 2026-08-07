@@ -47,12 +47,34 @@ from collections import defaultdict
 # ---------------------------------------------------------------- weights --
 # FROZEN at Stage A commit. Instantaneous terms are shared by BOTH policies;
 # temporal terms are what makes P-archive a distinct intervention.
-W_READOUT = 1.0          # readout error, per qubit
-W_T1 = 50.0              # 1/T1_us, per qubit  (50/200us = 0.25 -> comparable
-W_T2 = 50.0              # 1/T2_us, per qubit   to a ~1% readout error)
-W_CZ = 10.0              # CZ error on each data-ancilla coupler
-W_VAR = 2.0              # ARCHIVE ONLY: stdev of a patch's per-cycle score
-W_TAIL = 1.0             # ARCHIVE ONLY: (worst cycle score - mean)
+# --- Amendment A1 (2026-08-06) -------------------------------------------
+# Weights re-derived from measured discriminant validity, not intuition.
+# Spearman rho of each feature vs measured logical error, 131 ENC_ACTIVE
+# Tier 1 cells:
+#     readout_sum +0.607 (dominant; +0.83..+0.91 in EVERY variant/state)
+#     cz_err_sum  +0.344   inv_T1_sum +0.306   inv_T2_sum +0.271
+#     hist_mean   +0.288
+#     hist_variance -0.114  hist_tail -0.188   <-- ANTI-PREDICTIVE
+#
+# Instantaneous weights are rho-proportional AND scale-corrected, so each
+# term's contribution at typical fez values tracks its measured |rho|:
+#     readout 6.00 | cz 3.40 | T1 3.02 | T2 2.68
+#
+# The variance and worst-tail penalties are set to ZERO: they correlated
+# negatively with logical error in all six variant/state cells, steering
+# selection away from low-readout patches. P-archive is now the historical
+# MEAN of the re-weighted instantaneous score -- the one temporal feature
+# that predicts in the correct direction.
+#
+# CIRCULARITY: these weights were derived FROM Tier 1 outcomes. G1 and
+# Tier 1 must be re-run from scratch; the old cells are training data, not
+# evidence. See PREREGISTRATION.md Amendment A1 section 4.
+W_READOUT = 100.0        # readout error, per qubit   (was 1.0)
+W_T1 = 115.0             # 1/T1_us, per qubit         (was 50.0)
+W_T2 = 75.0              # 1/T2_us, per qubit         (was 50.0)
+W_CZ = 327.0             # CZ error per data-ancilla coupler (was 10.0)
+W_VAR = 0.0              # RETIRED by A1: rho -0.114, anti-predictive
+W_TAIL = 0.0             # RETIRED by A1: rho -0.188, anti-predictive
 W_MISSING = 5.0          # ARCHIVE ONLY: fraction of cycles with missing data
 
 DEFAULT_READOUT = 0.01   # fallbacks when a field is absent
@@ -266,9 +288,9 @@ def report(res: dict, budget_windows: int, sesoi: float) -> None:
           f"({sesoi/2:.4f}) during discordance")
     print("       -> requires Tier 1 noisy simulation; the score-space")
     print("          consequence above is a PROXY, not a logical-error delta.")
-    disp = ("proceed to Tier 1 for the second G1 criterion" if c1
-            else "REFRAME per prereg section 9 (convergence-dominated)")
-    print("\nDISPOSITION: " + disp)
+    print(f"\nDISPOSITION: {'proceed to Tier 1 for the second G1 criterion'
+                           if c1 else 'REFRAME per prereg section 9 '
+                           '(convergence-dominated)'}")
     print("Neither branch is a failure: convergence is a reportable finding")
     print("about intervention distinctness on this device.\n")
 

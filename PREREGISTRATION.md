@@ -352,3 +352,123 @@ live.
 - [ ] G5 compile gate pass
 - [ ] PI confirms: pilot-path class, rolling P-archive, SESOI = 0.010
 - [ ] Commit Stage A
+## Amendment A1 (2026-08-06) — patch score re-weighting after Tier 1
+### Pre-declared BEFORE any re-run; no hardware has been executed.
+
+**Status of the study at this amendment:** zero QPU seconds spent. Gates
+G1 and G2 passed. Tier 1 completed (394/432 cells, 8.8% Aer crash rate).
+Everything below is a simulation-stage design change made under the
+section 9 reframing branches.
+
+---
+
+### 1. What Tier 1 found
+
+The rolling-archive policy was consistently WORSE out of sample than the
+current-snapshot policy: mean paired delta positive in all six
+variant/state combinations (optimistic +0.0020/+0.0028, nominal
++0.0056/+0.0057, pessimistic +0.0144/+0.0161), archive-better in 1 of 35
+paired comparisons.
+
+G4 failed in the same run: P_weak underperformed in only 48% of
+comparable cells, indicating the patch score itself could not reliably
+separate good patches from bad ones.
+
+### 2. Why (the discriminant-validity diagnosis)
+
+Spearman correlation of each scoring feature against measured logical
+error, over 131 completed ENC_ACTIVE cells:
+
+| feature | pooled rho | direction |
+|---|---|---|
+| readout_sum | **+0.607** | correct, dominant (+0.83 to +0.91 in every variant/state cell) |
+| cz_err_sum | +0.344 | correct |
+| inv_T1_sum | +0.306 | correct |
+| inv_T2_sum | +0.271 | correct |
+| hist_mean | +0.288 | correct |
+| **hist_variance** | **-0.114** | **anti-predictive** |
+| **hist_tail** | **-0.188** | **anti-predictive** |
+| COMPOSITE_today | +0.282 | weak but valid |
+| COMPOSITE_archive | **-0.114** | **no discriminant validity** |
+
+The two archive-only temporal penalties are negatively correlated with
+logical error in ALL six variant/state cells. They steer selection away
+from low-readout patches, and readout is the dominant predictor for a
+repetition code whose ancillas are measured every round.
+
+**Conclusion:** the Tier 1 result does not falsify longitudinal
+calibration information. It falsifies THIS temporal weighting. The
+archive composite was actively anti-predictive (rho = -0.114), so the
+archive-vs-today comparison was argmin over a function that did not track
+the outcome.
+
+### 3. The change
+
+**3a. Instantaneous terms re-weighted, rho-proportional and
+scale-corrected.** Each feature's weight is set so its contribution at
+typical fez values is proportional to its measured |rho|:
+
+    W_READOUT = 100.0     (was 1.0)
+    W_CZ      = 327.0     (was 10.0)
+    W_T1      = 115.0     (was 50.0)
+    W_T2      = 75.0      (was 50.0)
+
+Typical-value contributions become readout 6.00, cz 3.40, T1 3.02,
+T2 2.68 -- readout dominant, matching the measurement.
+
+**3b. Anti-predictive temporal penalties removed.**
+
+    W_VAR  = 0.0          (was 2.0)   -- rho -0.114
+    W_TAIL = 0.0          (was 1.0)   -- rho -0.188
+
+**3c. P-archive is redefined as the historical MEAN of the re-weighted
+instantaneous score** (hist_mean, rho +0.288, the one temporal feature
+that predicts in the correct direction), plus the unchanged missing-data
+penalty (W_MISSING = 5.0). The policy contrast therefore becomes:
+
+    P-today   : re-weighted score on the latest eligible cycle
+    P-archive : mean of the re-weighted score over all prior eligible
+                cycles (rolling, causal, algorithm frozen)
+
+This is now a clean test of "does averaging over history beat using the
+most recent snapshot," with no anti-predictive terms in either arm.
+
+### 4. Circularity control (binding)
+
+The new weights were derived FROM Tier 1 outcomes. The 131 cells used in
+the diagnosis are therefore TRAINING data and cannot also serve as the
+test.
+
+Binding commitments:
+1. G1 and Tier 1 are re-run from scratch under the new weights.
+2. The prior Tier 1 result and the diagnosis are reported in full as the
+   derivation, never as evidence for the re-weighted score.
+3. If the re-weighted archive policy wins, that result is labelled
+   **exploratory** unless it is confirmed on calibration cycles collected
+   AFTER 2026-08-06, which no part of the weight derivation could have
+   seen. The collector continues running, so those cycles accrue
+   automatically.
+4. G4 is re-evaluated as the validity gate. If P_weak still fails to
+   underperform under the new weights, the score is still not valid for
+   this workload and Q-A does not proceed to hardware.
+
+### 5. What does NOT change
+
+SESOI (0.010); the pilot-estimation study class; the staged Stage A /
+Stage B structure; the frozen decoder and syndrome table; the three
+hardware circuit classes; the 40-minute QPU cap; all section 10
+guardrails; and every endpoint definition. No hardware decision is
+affected by this amendment because no hardware has run.
+
+### 6. Deviation logged
+
+Aer native crashes (exit -1073741819 / SIGSEGV) occur non-
+deterministically during Tier 1 simulation. Established as
+input-independent: reproduced on Windows and Colab Linux, on physically
+valid calibration values, with and without dynamic circuits, and a
+condition that crashes in sequence passes when run first in a fresh
+process. Mitigated by per-condition process isolation
+(qec/tier1_runner.py); crashed cells are recorded with exit codes and
+excluded from analysis. Crash rate for the completed Tier 1 sweep: 8.8%
+(38 of 432 cells). Affected keys are preserved in
+runs/tier1_heldout.json.
