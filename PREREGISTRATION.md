@@ -472,3 +472,200 @@ process. Mitigated by per-condition process isolation
 excluded from analysis. Crash rate for the completed Tier 1 sweep: 8.8%
 (38 of 432 cells). Affected keys are preserved in
 runs/tier1_heldout.json.
+## Amendment A2 (2026-08-06) — Path B: probe-vs-passive selection and
+## independent validation of the DAQEC crossover threshold
+### Pre-declared BEFORE any hardware execution. Zero QPU spent to date.
+
+---
+
+### 1. Why the study is being redirected
+
+Tier 1 (twice, under two independently derived scoring functions) found
+that patch selection from **passive archived calibration metadata** does
+not reduce logical error, and G4 failed both times: the score could not
+reliably separate P_weak from the selected policies.
+
+Two published results from Ashuraliyev (independent researcher, Tashkent)
+explain this and reframe the question:
+
+**(i) DAQEC-Benchmark** (Zenodo 10.5281/zenodo.18045662; manuscript
+submitted to Nature Communications). 756 QEC runs, 126 paired
+probe-deploy sessions, repetition code d=3-11 on IBM hardware. Reports
+60% logical error reduction (probe-deploy 0.0018 +/- 0.0001 vs baseline
+0.0045 +/- 0.0002), 76-77% tail reduction, p < 0.01, across 3 backends
+and 14 days. **Their selection ranks candidates by MEASURED error from
+30-shot probe circuits, not by calibration metadata.**
+
+**(ii) "Hardware Noise Level Moderates Drift-Aware QEC"** (Research
+Square rs-8475008, 2026-02-19). Finds a crossover: adaptive selection
+degrades LER by 14.3% below baseline LER 0.112 and improves it by 8.3%
+above (r = 0.71, P < 1e-11, IBM Torino, N=69 + N=15 pairs). Mechanistic
+decomposition: 15.4% fixed overhead vs 23.1% drift-signal benefit;
+Benefit(%) = 857.8 x LER - 96.0, R^2 = 0.50.
+
+**Consequence for QEC-P1.** Simulated ENC_ACTIVE logical error rates in
+our Tier 1 sweep were 0.001-0.03 — one to two orders of magnitude BELOW
+the reported 0.112 crossover. Under their model, selection strategies
+cannot help in that regime because there is nothing to optimize. This is
+an independent quantitative explanation for both our negative policy
+result and our G4 failure, and it is testable rather than merely
+plausible.
+
+**One tension we do not paper over.** Our archive penalty GREW with
+modelled noise (+0.0010 optimistic, +0.0052 nominal, +0.0150
+pessimistic), whereas their model predicts adaptive selection improves as
+noise rises. The comparisons differ (ours: longitudinal vs instantaneous
+metadata; theirs: measured-probe vs calibration baseline), but the
+direction conflict is recorded here as a pre-declared point of interest,
+not resolved by assumption.
+
+---
+
+### 2. Revised questions
+
+**Q-A' (primary, estimation).** Does selection from a short MEASURED
+probe outperform selection from passive archived calibration, and does
+either outperform a generic layout, on the same code and device?
+Three policies, paired within session:
+
+| policy | selection rule |
+|---|---|
+| P-probe | rank candidates by measured readout/logical error from short probe circuits, deploy the best |
+| P-archive | rolling frozen archive score (Amendment A1 weights), no probe |
+| P-generic | transpiler default layout, optimization_level=3, no initial_layout |
+
+**Q-B (retained).** Break-even characterization: S = p_BARE / p_L across
+BARE / ENC_PASSIVE / ENC_ACTIVE, duration-matched.
+
+**Q-C (new, threshold validation).** Where does the crossover sit on
+ibm_fez at d=3? The source publication states its threshold "was derived
+from the same dataset used to demonstrate the interaction effect and
+should be treated as an empirical estimate rather than a pre-registered
+hypothesis," and that "independent validation of the exact threshold
+value on held-out hardware remains for future work." Their model predicts
+IBM Heron d=3 crossover at LER 0.18-0.22.
+
+**Pre-declared analysis for Q-C:** regress (p_L[P-probe] -
+p_L[P-generic]) on baseline p_L[P-generic] across sessions; report the
+x-intercept with a bootstrap CI. **This is an estimation study.** With
+the session counts a 40-minute budget supports, it cannot confirm or
+refute their threshold; it reports an independent point estimate and its
+uncertainty, and states plainly whether the sign pattern is consistent.
+
+---
+
+### 3. Prior-work positioning (binding)
+
+QEC-P1 claims NO novelty over: probe-based drift-aware selection
+(Ashuraliyev, DAQEC-Benchmark), the noise-level interaction effect
+(Ashuraliyev rs-8475008), calibration-conditioned neural decoding (Stein
+et al. arXiv:2601.16123), syndrome-derived drift estimation (Bhardwaj et
+al. arXiv:2511.09491), variation-aware qubit allocation (Tannu & Qureshi,
+ASPLOS 2019), noise-adaptive compilation (Murali et al., ASPLOS 2019), or
+syndrome-derived device benchmarking (Wootton, arXiv:2207.00553).
+
+**Claimed contribution, narrow:** (a) a preregistered head-to-head of
+measured-probe vs passive-archive selection, which the prior work does
+not run as a contrast; (b) an independent point estimate of the crossover
+on a different device (ibm_fez) and code distance than the source
+dataset; (c) a documented negative on passive-metadata selection with the
+discriminant-validity mechanism (Spearman feature analysis, Amendment
+A1).
+
+**Source caveats recorded before use:** rs-8475008 is an unrefereed
+preprint; single author; the threshold is self-admittedly post-hoc from
+the demonstrating dataset; reported Ns are internally inconsistent
+(N=15 in text vs N=48 in figure panels); and the ibm_fez validation rests
+on 6 executions. The crossover is treated here as a HYPOTHESIS TO TEST,
+never as an established constant.
+
+---
+
+### 4. Design
+
+**Code and circuits.** Unchanged from v3 section 3: d=3 bit-flip
+repetition code, 3 rounds, frozen syndrome table and decoder, three
+hardware circuit classes (duration-matched BARE on all three data qubits,
+ENC_PASSIVE, ENC_ACTIVE), both logical states reported separately.
+
+**Probe design (adopted from the source protocol, cited).** Short probe
+circuits over N candidate patches; candidates ranked by MEASURED error;
+best deployed. Probe shot count and candidate count are frozen at Stage A
+after the pilot measures their cost. The source used 30-shot probes over
+9-qubit chains at d=5; we use d=3 patches, so probe parameters are set by
+our own pilot, not inherited.
+
+**Session structure.** Within one session, all three policies execute
+paired and interleaved in randomized order, all circuit classes, both
+states. Randomization seed recorded. Calibration timestamp captured
+before AND after each session.
+
+**Replication.** Target 4 sessions across distinct calibration windows;
+minimum 3. Sessions are the unit of replication. **Study class remains
+PILOT ESTIMATION** — no confirmatory superiority claim, per the sign-test
+arithmetic in v3.
+
+---
+
+### 5. Budget (arithmetic shown, not assumed)
+
+Per session: probes (30 shots x 8 candidates = 240) + main grid
+(4096 shots x 3 classes x 2 states x 3 policies = 73,728) = ~73,968
+circuit-shots.
+
+Extrapolating from the ONLY measured anchor we have (QNN-P1: 1,638,400
+circuit-shots = 8 QPU-min on ibm_fez):
+
+| assumption | per session | 4 sessions |
+|---|---|---|
+| QNN-P1 rate holds | ~0.4 min | ~1.4 min |
+| 3x (mid-circuit + dynamic overhead) | ~1.1 min | ~4.3 min |
+| 10x | ~3.6 min | ~14.4 min |
+
+**These are extrapolations from a different circuit class and are NOT
+used to size the study.** Stage A measures the real per-session cost;
+Stage B fixes shots and session count from that measurement by the frozen
+formula in v3 section 6. Hard cap unchanged: **40 QPU-minutes total**,
+remainder reserved for Design 6.
+
+---
+
+### 6. Gates
+
+- **G5 (compile)** — unchanged, still outstanding: every exact circuit
+  transpiles against the live target with declared layout, zero SWAPs,
+  no unsupported control flow, conditionals preserved. Heavy-hex max
+  degree is 3, so flag-qubit requirements (cf. arXiv:2403.10217) must be
+  ruled out at transpile time for every candidate patch.
+- **G6 (new, probe validity)** — the probe must rank candidates better
+  than chance against the same session's measured main-run p_L. If probe
+  rank and deployed p_L are uncorrelated across candidates, the probe arm
+  has no discriminant validity and Q-A' reports that, exactly as G4
+  reported it for the passive score. **This is the same gate that caught
+  the passive score; it is applied to the new method too.**
+- **G1/G2** — passed; carried forward unchanged.
+- **G3/G4 (simulation gates)** — retired for Q-A'. Tier 1 has served its
+  purpose: it produced the negative and the mechanism. The probe arm
+  cannot be evaluated in simulation, because a simulated probe measures
+  the simulator's own noise model rather than the device.
+
+---
+
+### 7. Retained without change
+
+SESOI (0.010); staged Stage A / Stage B commit structure with the
+forbidden-analyses list; frozen decoder and syndrome table; postselection
+reporting rules (conditional p_L never without acceptance rate and cost
+per success); absolute risk difference primary, suppression ratio
+secondary; every section 10 guardrail; the Aer crash deviation and its
+process-isolation mitigation.
+
+---
+
+### 8. Deviation record addition
+
+Tier 1 was run twice (2026-08-06). First run: original weights, 394/432
+cells, 8.8% Aer crash rate. Second run: Amendment A1 weights, 395/432
+cells, 8.6% crash rate. Both produced the same directional result. Score
+diagnosis over 131 ENC_ACTIVE cells is retained as the derivation record
+for A1 and is explicitly NOT evidence for the re-weighted score.
