@@ -1,0 +1,131 @@
+{
+  "stage": "A",
+  "job_id": "d9r5g4pdsedc73ag7hmg",
+  "patch": [
+    140,
+    141,
+    142,
+    143,
+    144
+  ],
+  "shots": 512,
+  "circuit_meta": [
+    {
+      "name": "probe_readout_0",
+      "depth": 1,
+      "ops": {
+        "measure": 5,
+        "barrier": 1
+      }
+    },
+    {
+      "name": "probe_readout_1",
+      "depth": 2,
+      "ops": {
+        "x": 5,
+        "measure": 5,
+        "barrier": 1
+      }
+    },
+    {
+      "name": "probe_syndrome",
+      "depth": 10,
+      "ops": {
+        "rz": 6,
+        "sx": 4,
+        "cz": 4,
+        "measure": 2,
+        "barrier": 1
+      }
+    },
+    {
+      "name": "enc_passive_1",
+      "depth": 65,
+      "ops": {
+        "sx": 48,
+        "rz": 35,
+        "cz": 28,
+        "measure": 9,
+        "barrier": 7,
+        "reset": 6
+      }
+    },
+    {
+      "name": "enc_active_1",
+      "depth": 74,
+      "ops": {
+        "sx": 48,
+        "rz": 35,
+        "cz": 28,
+        "barrier": 10,
+        "measure": 9,
+        "if_else": 9,
+        "reset": 6
+      }
+    },
+    {
+      "name": "dummy_ff",
+      "depth": 74,
+      "ops": {
+        "sx": 48,
+        "rz": 35,
+        "cz": 28,
+        "barrier": 10,
+        "measure": 9,
+        "if_else": 9,
+        "reset": 6
+      }
+    },
+    {
+      "name": "injected_x_d1",
+      "depth": 76,
+      "ops": {
+        "sx": 48,
+        "rz": 37,
+        "cz": 28,
+        "barrier": 10,
+        "measure": 9,
+        "if_else": 9,
+        "reset": 6
+      }
+    }
+  ],
+  "checks": {
+    "readout_probe_0": [
+      0.00977,
+      0.00586,
+      0.00195,
+      0.0,
+      0.04688
+    ],
+    "readout_probe_1": [
+      0.03125,
+      0.00977,
+      0.00195,
+      0.01172,
+      0.0332
+    ],
+    "syndrome_false_detection_rate": 0.08008,
+    "enc_active_1_returned_data": true,
+    "enc_active_1_distinct_outcomes": 4,
+    "dummy_ff_returned_data": true,
+    "dummy_ff_distinct_outcomes": 4,
+    "injected_x_logical_error": 0.9043,
+    "injected_x_corrected": false
+  },
+  "metrics": {
+    "bss": {
+      "seconds": 3
+    },
+    "usage": {
+      "quantum_seconds": 3,
+      "seconds": 3,
+      "status": "complete"
+    },
+    "timestamps": {
+      "created": "2026-08-07T22:11:31.367523Z",
+      "finished": "2026-08-07T23:06:09.885535Z",
+      "running": "2026-08-07T23:05:49.035293Z"
+    }
+  }
+}

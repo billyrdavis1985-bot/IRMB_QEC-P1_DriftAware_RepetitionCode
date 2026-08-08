@@ -1,0 +1,107 @@
+{
+  "job_id": "d9r5g4pdsedc73ag7hmg",
+  "submitted_utc": "2026-08-07T22:11:32Z",
+  "backend": "ibm_fez",
+  "patch": [
+    140,
+    141,
+    142,
+    143,
+    144
+  ],
+  "rounds": 3,
+  "shots": 512,
+  "circuit_names": [
+    "probe_readout_0",
+    "probe_readout_1",
+    "probe_syndrome",
+    "enc_passive_1",
+    "enc_active_1",
+    "dummy_ff",
+    "injected_x_d1"
+  ],
+  "circuit_meta": [
+    {
+      "name": "probe_readout_0",
+      "depth": 1,
+      "ops": {
+        "measure": 5,
+        "barrier": 1
+      }
+    },
+    {
+      "name": "probe_readout_1",
+      "depth": 2,
+      "ops": {
+        "x": 5,
+        "measure": 5,
+        "barrier": 1
+      }
+    },
+    {
+      "name": "probe_syndrome",
+      "depth": 10,
+      "ops": {
+        "rz": 6,
+        "sx": 4,
+        "cz": 4,
+        "measure": 2,
+        "barrier": 1
+      }
+    },
+    {
+      "name": "enc_passive_1",
+      "depth": 65,
+      "ops": {
+        "sx": 48,
+        "rz": 35,
+        "cz": 28,
+        "measure": 9,
+        "barrier": 7,
+        "reset": 6
+      }
+    },
+    {
+      "name": "enc_active_1",
+      "depth": 74,
+      "ops": {
+        "sx": 48,
+        "rz": 35,
+        "cz": 28,
+        "barrier": 10,
+        "measure": 9,
+        "if_else": 9,
+        "reset": 6
+      }
+    },
+    {
+      "name": "dummy_ff",
+      "depth": 74,
+      "ops": {
+        "sx": 48,
+        "rz": 35,
+        "cz": 28,
+        "barrier": 10,
+        "measure": 9,
+        "if_else": 9,
+        "reset": 6
+      }
+    },
+    {
+      "name": "injected_x_d1",
+      "depth": 76,
+      "ops": {
+        "sx": 48,
+        "rz": 37,
+        "cz": 28,
+        "barrier": 10,
+        "measure": 9,
+        "if_else": 9,
+        "reset": 6
+      }
+    }
+  ],
+  "stage": "A",
+  "budget_cap_min": 6.0,
+  "calibration_before": "2026-08-06 23:21:59-04:00"
+}
