@@ -669,3 +669,141 @@ cells, 8.8% Aer crash rate. Second run: Amendment A1 weights, 395/432
 cells, 8.6% crash rate. Both produced the same directional result. Score
 diagnosis over 131 ENC_ACTIVE cells is retained as the derivation record
 for A1 and is explicitly NOT evidence for the re-weighted score.
+## Stage B Commit (2026-08-07) — confirmatory matrix frozen
+### Committed BEFORE any confirmatory session. Stage A is complete.
+
+Per PREREGISTRATION v3 section 4, this amendment fixes the confirmatory
+design using ONLY (a) Tier 1 simulation outputs and (b) Stage A COST
+data. No patch- or policy-level logical error rate from the pilot was
+computed or inspected; the forbidden-analysis guard in qec/stage_a.py
+enforced this in code.
+
+---
+
+### 1. Stage A outcome (allowed outputs only)
+
+Job d9r5g4pdsedc73ag7hmg, ibm_fez, diagnostic patch (140,141,142,143,144),
+7 circuits x 512 shots.
+
+| allowed output | value |
+|---|---|
+| metered cost | bss 3 s, usage 3 s, status complete |
+| readout probe \|0> | [0.00977, 0.00586, 0.00195, 0.0, 0.04688] |
+| readout probe \|1> | [0.03125, 0.00977, 0.00195, 0.01172, 0.0332] |
+| syndrome false-detection rate | 0.08008 |
+| control path executed | yes (78 distinct outcomes, ENC_ACTIVE) |
+| injected-X decode | p_L = 0.1582, corrected = True |
+
+The injected-X check is the one sanctioned p_L in Stage A (functional
+verification). It confirms the frozen syndrome table and the in-circuit
+correction path behave correctly on hardware, not only in simulation.
+
+**Note for interpretation, not a result:** the 8.0% syndrome
+false-detection rate on an error-free state means a non-trivial fraction
+of rounds will trigger a false correction, and false corrections inject
+errors. This makes Q-B's break-even question materially live. It is
+recorded here as an observation from an allowed Stage A output; it is not
+used to set any threshold.
+
+---
+
+### 2. Frozen confirmatory matrix
+
+Derived from the measured anchor (3,584 circuit-shots = 3.0 s, i.e.
+837 s per 1e6 circuit-shots) by the formula frozen in v3 section 6.
+
+**Per session:**
+
+| component | value |
+|---|---|
+| candidate patches probed | 8 |
+| probe circuits per candidate | 3 (readout \|0>, readout \|1>, syndrome) |
+| probe shots | 256 |
+| policies | 3 (P-probe, P-archive, P-generic) |
+| circuit classes | BARE (x3 data qubits), ENC_PASSIVE, ENC_ACTIVE |
+| logical states | 2 (\|0_L>, \|1_L>) |
+| main shots | 4096 |
+| main circuits | 3 policies x 2 states x 5 = 30 |
+| **session total** | **129,024 circuit-shots, ~108 s projected** |
+
+**Sessions:** 4 target, 3 minimum, each in a distinct calibration window
+(verified by calibration timestamp change). Within a session all
+policies execute paired and interleaved in randomized order; the
+randomization seed is recorded.
+
+**Projected total: ~7.2 min of the 40-min cap.** Headroom ~33 min.
+
+**Binding cost rule:** after session 1, re-read the meter. If measured
+cost exceeds 3x the projection (>5.4 min for one session), STOP and
+re-size by amendment before session 2. At 10x the anchor only 2 sessions
+would fit, so this rule is what prevents silently overrunning.
+
+---
+
+### 3. Frozen analysis model
+
+- **Primary estimand (Q-A'):** paired within-session difference in p_L,
+  ENC_ACTIVE, \|1_L>, between P-probe and P-archive. Absolute risk
+  difference. Negative favours P-probe.
+- **Secondary:** P-probe vs P-generic; P-archive vs P-generic; both
+  logical states reported separately before any averaging.
+- **Q-B:** S = p_BARE / p_L per class per policy, with p_BARE from the
+  pre-designated best constituent data qubit (frozen by score before
+  execution) and also reported against the mean of all three.
+- **Q-C:** regress (p_L[P-probe] - p_L[P-generic]) on baseline
+  p_L[P-generic] across sessions; report x-intercept with bootstrap CI.
+  **Estimation only** — 4 sessions cannot confirm or refute the published
+  0.112 threshold, and no such claim will be made.
+- **Intervals:** Wilson per cell; paired-by-session for the primary.
+- **Multiplicity:** ONE primary comparison; all else exploratory.
+- **Postselection:** conditional p_L never reported without acceptance
+  rate, unconditional success per submitted shot, and QPU-seconds per
+  successful logical outcome.
+- **SESOI:** 0.010, unchanged, set before Tier 1 and never revised.
+- **Study class:** PILOT ESTIMATION. No confirmatory superiority claim.
+
+---
+
+### 4. G6 — probe validity (evaluated per session)
+
+Spearman rank correlation between probe score and measured main-run p_L
+across the candidate patches deployed. Thresholds as declared:
+rho >= 0.4 valid, 0.2-0.4 weak, < 0.2 fail.
+
+If G6 fails, Q-A' reports that the probe lacks discriminant validity for
+this workload — exactly as G4 reported it for the passive archive score.
+A published positive result elsewhere does not exempt the probe from the
+gate that killed the passive method.
+
+---
+
+### 5. Deviation log entry
+
+**D-A1 (2026-08-07).** The Stage A analysis pass initially reported
+injected_x_logical_error = 0.9043 (corrected = False) and 4 distinct
+outcomes for a 9-classical-bit circuit. Root cause: the result parser
+resolved classical registers with getattr on the SamplerV2 DataBin, but
+DataBin exposes its own attributes (data, keys, items, values, shape,
+size, ndim); the encoded circuits contain a register literally named
+"data", so the container attribute was returned instead of the register
+and only one 2-bit register was read. Fixed by subscript access
+(data[name]). Re-analysis of the SAME job via --retrieve gave 78 distinct
+outcomes and injected_x_logical_error = 0.1582 (corrected = True). **Zero
+additional QPU was spent on the correction.** No scientific conclusion
+was drawn from the erroneous pass. The pilot detecting this before Stage
+B is the staged design working as intended.
+
+**D-A2 (2026-08-07).** The first Stage B sizing script printed "4
+sessions at 10x = 72.0 min (still inside cap)", which is false against a
+40-minute cap. Corrected before use to compute affordable session counts
+per multiplier (1x and 3x: 4 sessions fit; 10x: 2 sessions fit).
+
+---
+
+### 6. Unchanged
+
+Frozen decoder and syndrome table; three hardware circuit classes;
+duration-matched BARE; both logical states separate; staged-commit
+integrity; all section 10 guardrails; the Aer crash deviation and its
+process-isolation mitigation; prior-work positioning and source caveats
+from Amendment A2 section 3.
