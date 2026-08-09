@@ -807,3 +807,115 @@ duration-matched BARE; both logical states separate; staged-commit
 integrity; all section 10 guardrails; the Aer crash deviation and its
 process-isolation mitigation; prior-work positioning and source caveats
 from Amendment A2 section 3.
+## Amendment A3 (2026-08-09) — session replication unit redefined
+### Pre-declared BEFORE session 2. Session 1 is complete and unaffected.
+
+---
+
+### 1. The situation
+
+`ibm_fez` last published a calibration update at **2026-08-06 23:21:59-04:00**.
+As of 2026-08-09 16:51 that is **~65 hours**, verified with
+`properties(refresh=True)` so it is not a client cache. The backend reports
+`operational: True`, `status: active`, 0 pending jobs. `ibm_marrakesh` froze
+at 2026-08-06 23:19:40, two minutes earlier, so the event is fleet-wide and
+not specific to this account or device.
+
+The QPU Drift Collector polled correctly throughout (hourly, `dedup_skip` on
+unchanged timestamp, exit 0). Nothing on the collection side failed.
+
+For context from the archive itself: 707 snapshots between 2026-06-18 and
+2026-08-06 produced 707 unique calibration timestamps, median gap **1.2
+hours**, maximum **60.6 hours**. The present gap exceeds every previously
+observed interval.
+
+### 2. Why the original gate was wrong
+
+Stage B required a **changed published calibration timestamp** as the marker
+of a distinct session window. That was a proxy for the actual scientific
+requirement, which is that sessions sample **different hardware states**.
+The proxy fails for two reasons:
+
+**(a) IBM documents that benchmarking can fail for days.** Per IBM's backend
+documentation: if benchmarking of a qubit or edge does not succeed over the
+course of several days, the reported error value is considered stale and is
+reported as 1 — explicitly meaning *undefined*, not *broken*. Multi-day gaps
+in published calibration are therefore an anticipated operating condition,
+not an anomaly the protocol may assume away.
+
+**(b) `ibm_fez` adjusts itself continuously regardless of publication.**
+Heron r2 runs active two-level-system (TLS) mitigation: the system
+continuously monitors the TLS environment and makes calibration adjustments
+to keep the chip away from TLS resonances. The physical device state
+therefore evolves *between* published snapshots. A frozen published
+timestamp does not imply frozen hardware; it implies frozen *metadata*.
+
+Taken together: the published timestamp is a poor marker of hardware state,
+and gating on it can stall the study indefinitely for a reason unrelated to
+the science.
+
+### 3. The change
+
+**Replication unit (revised).** A session is a distinct window if it is
+separated from the previous session by **at least 12 hours**. The published
+calibration timestamp is still recorded before and after every session, and
+each session is **flagged** with the age of the calibration data it ran
+under.
+
+**Stale-calibration flag.** Any session executing under calibration older
+than 6 hours is marked `stale_calibration: true` with the age in hours. This
+is recorded per session and analysed, not absorbed.
+
+**Sensitivity analysis (pre-declared).** The primary Q-A' estimate is
+reported (i) across all sessions and (ii) restricted to sessions with fresh
+calibration, if both strata contain at least two sessions. If the two differ
+materially, that difference is reported as a finding rather than resolved by
+choosing a stratum.
+
+**Stale-value guard.** Before each session, any candidate patch containing a
+qubit or coupler whose reported error equals exactly 1.0 (IBM's undefined
+marker) is **excluded from the candidate pool**, and the exclusion is
+recorded. Scoring a patch on a placeholder value would make the archive
+policy's selection meaningless for that patch.
+
+### 4. Why this strengthens rather than weakens the study
+
+Q-A' asks whether selection from **passive archived calibration metadata**
+beats selection from **direct measurement**. A period in which published
+calibration is frozen for days while the device continues to self-adjust is
+the condition of **maximum divergence** between those two information
+sources: the archive policy reads three-day-old metadata while the probe
+measures the device as it currently is.
+
+This is not a degraded operating condition for the experiment. It is the
+regime the experiment was designed to discriminate. If the probe policy has
+an advantage anywhere, stale-calibration sessions are where it should be
+largest — and that is now a testable, pre-declared prediction rather than a
+post-hoc rationalisation.
+
+**Pre-declared directional expectation (exploratory):** the P-probe minus
+P-archive difference is expected to be more negative (favouring the probe)
+in stale-calibration sessions than in fresh ones. Recorded here before any
+session-2 data exists. This is an expectation, not an endpoint; the primary
+estimand and SESOI are unchanged.
+
+### 5. Unchanged
+
+Everything else in the Stage B commit: the frozen matrix (8 candidates,
+256 probe shots, 4096 main shots, 30 main circuits), the three policies,
+both logical states reported separately, SESOI 0.010, the pilot-estimation
+study class with no confirmatory superiority claim, the frozen decoder and
+syndrome table, G5 and G6, the binding cost rule, the 40-minute cap, and all
+guardrails. Session 1 (2026-08-07, seed 1001, 39 QPU-seconds, 54/54
+circuits) is complete, valid, and unaffected; it is retrospectively flagged
+with the calibration age it ran under.
+
+### 6. Deviation entry
+
+**D-B1 (2026-08-09).** The Stage B session gate required a changed published
+calibration timestamp. `ibm_fez` did not publish an update for >65 hours
+(fleet-wide; `ibm_marrakesh` likewise), exceeding the maximum 60.6-hour gap
+observed across 707 archived snapshots and blocking session 2 indefinitely.
+The gate is replaced with a 12-hour minimum separation plus per-session
+calibration-age flagging and a pre-declared sensitivity analysis. No session
+data is affected; session 1 predates the change and is unmodified.
