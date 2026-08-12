@@ -1,0 +1,95 @@
+{
+  "session": 2,
+  "seed": 1002,
+  "backend": "ibm_fez",
+  "rounds": 3,
+  "probe_shots": 256,
+  "main_shots": 4096,
+  "candidates": [
+    [
+      2,
+      3,
+      16,
+      23,
+      22
+    ],
+    [
+      20,
+      21,
+      22,
+      23,
+      16
+    ],
+    [
+      3,
+      16,
+      23,
+      22,
+      21
+    ],
+    [
+      4,
+      3,
+      16,
+      23,
+      22
+    ],
+    [
+      36,
+      21,
+      22,
+      23,
+      16
+    ],
+    [
+      5,
+      4,
+      3,
+      16,
+      23
+    ],
+    [
+      124,
+      123,
+      136,
+      143,
+      144
+    ],
+    [
+      110,
+      109,
+      118,
+      129,
+      130
+    ]
+  ],
+  "submitted_utc": "2026-08-10T20:40:43Z",
+  "calibration_before": "2026-08-10 10:02:35-04:00",
+  "probe_job_id": "d9t3ej1dsedc73aie9e0",
+  "probe_names": [
+    "probe|(2, 3, 16, 23, 22)|readout0",
+    "probe|(2, 3, 16, 23, 22)|readout1",
+    "probe|(2, 3, 16, 23, 22)|syndrome",
+    "probe|(20, 21, 22, 23, 16)|readout0",
+    "probe|(20, 21, 22, 23, 16)|readout1",
+    "probe|(20, 21, 22, 23, 16)|syndrome",
+    "probe|(3, 16, 23, 22, 21)|readout0",
+    "probe|(3, 16, 23, 22, 21)|readout1",
+    "probe|(3, 16, 23, 22, 21)|syndrome",
+    "probe|(4, 3, 16, 23, 22)|readout0",
+    "probe|(4, 3, 16, 23, 22)|readout1",
+    "probe|(4, 3, 16, 23, 22)|syndrome",
+    "probe|(36, 21, 22, 23, 16)|readout0",
+    "probe|(36, 21, 22, 23, 16)|readout1",
+    "probe|(36, 21, 22, 23, 16)|syndrome",
+    "probe|(5, 4, 3, 16, 23)|readout0",
+    "probe|(5, 4, 3, 16, 23)|readout1",
+    "probe|(5, 4, 3, 16, 23)|syndrome",
+    "probe|(124, 123, 136, 143, 144)|readout0",
+    "probe|(124, 123, 136, 143, 144)|readout1",
+    "probe|(124, 123, 136, 143, 144)|syndrome",
+    "probe|(110, 109, 118, 129, 130)|readout0",
+    "probe|(110, 109, 118, 129, 130)|readout1",
+    "probe|(110, 109, 118, 129, 130)|syndrome"
+  ]
+}
