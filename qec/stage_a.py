@@ -1,4 +1,4 @@
-"""QEC-P1 Stage A — engineering pilot on ibm_fez. THE FIRST QPU SPEND.
+﻿"""QEC-P1 Stage A â€” engineering pilot on ibm_fez. THE FIRST QPU SPEND.
 
 PURPOSE (PREREGISTRATION v3 section 4, Amendment A2 section 5)
 --------------------------------------------------------------
@@ -138,7 +138,7 @@ def submit(patch, rounds, shots, service_kwargs=None):
     from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 
     service = QiskitRuntimeService(**(service_kwargs or {}))
-    backend = service.backend("ibm_fez")
+    backend = service.backend("ibm_marrakesh")
     d1, a1, d2, a2, d3 = patch
     layout = [d1, d2, d3, a1, a2]
 
@@ -329,3 +329,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

@@ -1,4 +1,4 @@
-"""Check whether ibm_fez is reporting IBM's documented stale-benchmark marker.
+﻿"""Check whether ibm_fez is reporting IBM's documented stale-benchmark marker.
 
 IBM documents: "If the benchmarking of a qubit or edge does not succeed over
 the course of several days ... the reported error value is considered stale
@@ -11,7 +11,7 @@ a placeholder and the selection is meaningless for it.
 from qiskit_ibm_runtime import QiskitRuntimeService
 
 svc = QiskitRuntimeService()
-be = svc.backend("ibm_fez")
+be = svc.backend("ibm_marrakesh")
 props = be.properties(refresh=True)
 print("calibration timestamp:", props.last_update_date)
 
@@ -46,3 +46,4 @@ for name, patch in (("P_probe   ", (3, 16, 23, 22, 21)),
                     ("P_archive ", (141, 142, 143, 144, 145))):
     bad = [q for q in patch if q in stale_q]
     print(f"{name} {patch}: stale qubits -> {bad if bad else 'none'}")
+

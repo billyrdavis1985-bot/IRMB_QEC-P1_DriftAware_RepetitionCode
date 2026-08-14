@@ -1,4 +1,4 @@
-"""QEC-P1 gate G5 — compile verification against the LIVE backend target.
+﻿"""QEC-P1 gate G5 â€” compile verification against the LIVE backend target.
 
 The last free gate before Stage A. Costs zero QPU time: it reads the
 backend target and transpiles locally. Nothing is submitted.
@@ -47,7 +47,7 @@ def get_target(offline_snapshot: str | None):
         return None, "offline"
     from qiskit_ibm_runtime import QiskitRuntimeService
     service = QiskitRuntimeService()
-    backend = service.backend("ibm_fez")
+    backend = service.backend("ibm_marrakesh")
     return backend, backend.name
 
 
@@ -225,3 +225,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

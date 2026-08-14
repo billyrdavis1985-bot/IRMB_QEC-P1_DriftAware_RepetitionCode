@@ -1,0 +1,788 @@
+{
+  "backend": "ibm_marrakesh",
+  "rounds": 3,
+  "n_pass": 12,
+  "n_checked": 12,
+  "results": [
+    {
+      "patch": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "geometry_ok": true,
+      "geometry": "all 4 data-ancilla couplers present",
+      "circuits": [
+        {
+          "patch": [
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "active": false,
+          "depth": 65,
+          "n_swap": 0,
+          "n_if_else_src": 0,
+          "n_if_else_isa": 0,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "measure": 9,
+            "barrier": 7,
+            "reset": 6
+          }
+        },
+        {
+          "patch": [
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "active": true,
+          "depth": 74,
+          "n_swap": 0,
+          "n_if_else_src": 9,
+          "n_if_else_isa": 9,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "barrier": 10,
+            "measure": 9,
+            "if_else": 9,
+            "reset": 6
+          }
+        }
+      ],
+      "all_ok": true
+    },
+    {
+      "patch": [
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "geometry_ok": true,
+      "geometry": "all 4 data-ancilla couplers present",
+      "circuits": [
+        {
+          "patch": [
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "active": false,
+          "depth": 65,
+          "n_swap": 0,
+          "n_if_else_src": 0,
+          "n_if_else_isa": 0,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "measure": 9,
+            "barrier": 7,
+            "reset": 6
+          }
+        },
+        {
+          "patch": [
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "active": true,
+          "depth": 74,
+          "n_swap": 0,
+          "n_if_else_src": 9,
+          "n_if_else_isa": 9,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "barrier": 10,
+            "measure": 9,
+            "if_else": 9,
+            "reset": 6
+          }
+        }
+      ],
+      "all_ok": true
+    },
+    {
+      "patch": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "geometry_ok": true,
+      "geometry": "all 4 data-ancilla couplers present",
+      "circuits": [
+        {
+          "patch": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "active": false,
+          "depth": 65,
+          "n_swap": 0,
+          "n_if_else_src": 0,
+          "n_if_else_isa": 0,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "measure": 9,
+            "barrier": 7,
+            "reset": 6
+          }
+        },
+        {
+          "patch": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "active": true,
+          "depth": 74,
+          "n_swap": 0,
+          "n_if_else_src": 9,
+          "n_if_else_isa": 9,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "barrier": 10,
+            "measure": 9,
+            "if_else": 9,
+            "reset": 6
+          }
+        }
+      ],
+      "all_ok": true
+    },
+    {
+      "patch": [
+        16,
+        3,
+        4,
+        5,
+        6
+      ],
+      "geometry_ok": true,
+      "geometry": "all 4 data-ancilla couplers present",
+      "circuits": [
+        {
+          "patch": [
+            16,
+            3,
+            4,
+            5,
+            6
+          ],
+          "active": false,
+          "depth": 65,
+          "n_swap": 0,
+          "n_if_else_src": 0,
+          "n_if_else_isa": 0,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 49,
+            "rz": 36,
+            "cz": 28,
+            "measure": 9,
+            "barrier": 7,
+            "reset": 6
+          }
+        },
+        {
+          "patch": [
+            16,
+            3,
+            4,
+            5,
+            6
+          ],
+          "active": true,
+          "depth": 74,
+          "n_swap": 0,
+          "n_if_else_src": 9,
+          "n_if_else_isa": 9,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 49,
+            "rz": 36,
+            "cz": 28,
+            "barrier": 10,
+            "measure": 9,
+            "if_else": 9,
+            "reset": 6
+          }
+        }
+      ],
+      "all_ok": true
+    },
+    {
+      "patch": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "geometry_ok": true,
+      "geometry": "all 4 data-ancilla couplers present",
+      "circuits": [
+        {
+          "patch": [
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "active": false,
+          "depth": 65,
+          "n_swap": 0,
+          "n_if_else_src": 0,
+          "n_if_else_isa": 0,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "measure": 9,
+            "barrier": 7,
+            "reset": 6
+          }
+        },
+        {
+          "patch": [
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "active": true,
+          "depth": 74,
+          "n_swap": 0,
+          "n_if_else_src": 9,
+          "n_if_else_isa": 9,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "barrier": 10,
+            "measure": 9,
+            "if_else": 9,
+            "reset": 6
+          }
+        }
+      ],
+      "all_ok": true
+    },
+    {
+      "patch": [
+        53,
+        54,
+        55,
+        59,
+        75
+      ],
+      "geometry_ok": true,
+      "geometry": "all 4 data-ancilla couplers present",
+      "circuits": [
+        {
+          "patch": [
+            53,
+            54,
+            55,
+            59,
+            75
+          ],
+          "active": false,
+          "depth": 65,
+          "n_swap": 0,
+          "n_if_else_src": 0,
+          "n_if_else_isa": 0,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "measure": 9,
+            "barrier": 7,
+            "reset": 6
+          }
+        },
+        {
+          "patch": [
+            53,
+            54,
+            55,
+            59,
+            75
+          ],
+          "active": true,
+          "depth": 74,
+          "n_swap": 0,
+          "n_if_else_src": 9,
+          "n_if_else_isa": 9,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "barrier": 10,
+            "measure": 9,
+            "if_else": 9,
+            "reset": 6
+          }
+        }
+      ],
+      "all_ok": true
+    },
+    {
+      "patch": [
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "geometry_ok": true,
+      "geometry": "all 4 data-ancilla couplers present",
+      "circuits": [
+        {
+          "patch": [
+            9,
+            10,
+            11,
+            12,
+            13
+          ],
+          "active": false,
+          "depth": 65,
+          "n_swap": 0,
+          "n_if_else_src": 0,
+          "n_if_else_isa": 0,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "measure": 9,
+            "barrier": 7,
+            "reset": 6
+          }
+        },
+        {
+          "patch": [
+            9,
+            10,
+            11,
+            12,
+            13
+          ],
+          "active": true,
+          "depth": 74,
+          "n_swap": 0,
+          "n_if_else_src": 9,
+          "n_if_else_isa": 9,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "barrier": 10,
+            "measure": 9,
+            "if_else": 9,
+            "reset": 6
+          }
+        }
+      ],
+      "all_ok": true
+    },
+    {
+      "patch": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "geometry_ok": true,
+      "geometry": "all 4 data-ancilla couplers present",
+      "circuits": [
+        {
+          "patch": [
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "active": false,
+          "depth": 65,
+          "n_swap": 0,
+          "n_if_else_src": 0,
+          "n_if_else_isa": 0,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "measure": 9,
+            "barrier": 7,
+            "reset": 6
+          }
+        },
+        {
+          "patch": [
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "active": true,
+          "depth": 74,
+          "n_swap": 0,
+          "n_if_else_src": 9,
+          "n_if_else_isa": 9,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "barrier": 10,
+            "measure": 9,
+            "if_else": 9,
+            "reset": 6
+          }
+        }
+      ],
+      "all_ok": true
+    },
+    {
+      "patch": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "geometry_ok": true,
+      "geometry": "all 4 data-ancilla couplers present",
+      "circuits": [
+        {
+          "patch": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "active": false,
+          "depth": 65,
+          "n_swap": 0,
+          "n_if_else_src": 0,
+          "n_if_else_isa": 0,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "measure": 9,
+            "barrier": 7,
+            "reset": 6
+          }
+        },
+        {
+          "patch": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "active": true,
+          "depth": 74,
+          "n_swap": 0,
+          "n_if_else_src": 9,
+          "n_if_else_isa": 9,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "barrier": 10,
+            "measure": 9,
+            "if_else": 9,
+            "reset": 6
+          }
+        }
+      ],
+      "all_ok": true
+    },
+    {
+      "patch": [
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "geometry_ok": true,
+      "geometry": "all 4 data-ancilla couplers present",
+      "circuits": [
+        {
+          "patch": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "active": false,
+          "depth": 65,
+          "n_swap": 0,
+          "n_if_else_src": 0,
+          "n_if_else_isa": 0,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "measure": 9,
+            "barrier": 7,
+            "reset": 6
+          }
+        },
+        {
+          "patch": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "active": true,
+          "depth": 74,
+          "n_swap": 0,
+          "n_if_else_src": 9,
+          "n_if_else_isa": 9,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "barrier": 10,
+            "measure": 9,
+            "if_else": 9,
+            "reset": 6
+          }
+        }
+      ],
+      "all_ok": true
+    },
+    {
+      "patch": [
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "geometry_ok": true,
+      "geometry": "all 4 data-ancilla couplers present",
+      "circuits": [
+        {
+          "patch": [
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "active": false,
+          "depth": 65,
+          "n_swap": 0,
+          "n_if_else_src": 0,
+          "n_if_else_isa": 0,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "measure": 9,
+            "barrier": 7,
+            "reset": 6
+          }
+        },
+        {
+          "patch": [
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "active": true,
+          "depth": 74,
+          "n_swap": 0,
+          "n_if_else_src": 9,
+          "n_if_else_isa": 9,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 48,
+            "rz": 35,
+            "cz": 28,
+            "barrier": 10,
+            "measure": 9,
+            "if_else": 9,
+            "reset": 6
+          }
+        }
+      ],
+      "all_ok": true
+    },
+    {
+      "patch": [
+        110,
+        109,
+        118,
+        129,
+        128
+      ],
+      "geometry_ok": true,
+      "geometry": "all 4 data-ancilla couplers present",
+      "circuits": [
+        {
+          "patch": [
+            110,
+            109,
+            118,
+            129,
+            128
+          ],
+          "active": false,
+          "depth": 65,
+          "n_swap": 0,
+          "n_if_else_src": 0,
+          "n_if_else_isa": 0,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 49,
+            "rz": 36,
+            "cz": 28,
+            "measure": 9,
+            "barrier": 7,
+            "reset": 6
+          }
+        },
+        {
+          "patch": [
+            110,
+            109,
+            118,
+            129,
+            128
+          ],
+          "active": true,
+          "depth": 74,
+          "n_swap": 0,
+          "n_if_else_src": 9,
+          "n_if_else_isa": 9,
+          "conditionals_preserved": true,
+          "layout_honoured": true,
+          "two_qubit_gates": 28,
+          "ops": {
+            "sx": 49,
+            "rz": 36,
+            "cz": 28,
+            "barrier": 10,
+            "measure": 9,
+            "if_else": 9,
+            "reset": 6
+          }
+        }
+      ],
+      "all_ok": true
+    }
+  ]
+}

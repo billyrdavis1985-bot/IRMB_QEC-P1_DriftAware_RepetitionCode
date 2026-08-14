@@ -1,4 +1,4 @@
-"""QEC-P1 Stage B — confirmatory session runner. THE STUDY ITSELF.
+﻿"""QEC-P1 Stage B â€” confirmatory session runner. THE STUDY ITSELF.
 
 One invocation = one calibration window = one session. Everything in a
 session goes in a SINGLE Runtime job so all policies experience the same
@@ -194,7 +194,7 @@ def submit_session(session: int, snapshots: str, seed: int) -> dict:
     from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
 
     service = QiskitRuntimeService()
-    backend = service.backend("ibm_fez")
+    backend = service.backend("ibm_marrakesh")
     cycles = load_cycles(snapshots)
     cands = candidate_patches(cycles, N_CANDIDATES)
     print(f"candidate patches ({len(cands)}):")
@@ -395,3 +395,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

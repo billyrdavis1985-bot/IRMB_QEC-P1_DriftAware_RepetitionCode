@@ -919,3 +919,127 @@ observed across 707 archived snapshots and blocking session 2 indefinitely.
 The gate is replaced with a 12-hour minimum separation plus per-session
 calibration-age flagging and a pre-declared sensitivity analysis. No session
 data is affected; session 1 predates the change and is unmodified.
+## Amendment A4 (2026-08-14) — backend migration, ibm_fez to ibm_marrakesh
+### Pre-declared BEFORE any marrakesh data is collected or examined.
+
+---
+
+### 1. Why
+
+Stage B fixed `ibm_fez` as the study backend. That device has become
+effectively unusable for this study.
+
+**Evidence (all recorded before this amendment):**
+
+| observation | value |
+|---|---|
+| `ibm_fez.status().pending_jobs` (2026-08-14) | **24,668** |
+| `ibm_marrakesh.status().pending_jobs` | 0 |
+| `ibm_kingston.status().pending_jobs` | 21 |
+| probe `d9t3ej1dsedc73aie9e0` (24 PUBs, ~5 s est.) | QUEUED 4 days, never executed |
+| minimal test `d9v40ano3ppc73ajptm0` (1 PUB, 1 qubit, 10 shots) | QUEUED 24 h, never executed |
+| marrakesh test `d9vnvst0vrcc73bpi050` (identical minimal job) | completed immediately |
+| control `d9r7ihopdb6s73e4i4og` (same script, 24 PUBs, ibm_fez) | completed in ~7 min, 2026-08-07 |
+
+Both stalled fez jobs reported `position_in_queue: None` and
+`estimated_start_time: None` throughout, while the backend reported
+`operational: True, status: active`.
+
+**Ruled out before concluding it was device-side:** job size and PUB count
+(a 1-PUB/10-shot job stalled identically); stuck or concurrent jobs (job
+list showed no other QUEUED or RUNNING entries); credentials (verified via
+`instances()`, and the Scout collector authenticated continuously with the
+same token); instance resolution (explicit CRN resolves cleanly); quota
+(~39 of 180 promotional minutes remain; queued jobs are not billed).
+
+**Antecedent:** `ibm_fez` and `ibm_marrakesh` both published no calibration
+update between 2026-08-06 23:20 and 2026-08-10 10:02 (~83 h, fleet-wide).
+The fez backlog is consistent with accumulated global open-plan submissions
+during that freeze. A support ticket has been filed.
+
+### 2. The change
+
+**Study backend becomes `ibm_marrakesh`** for all remaining Stage B
+sessions.
+
+Justification for marrakesh over kingston, which is also idle and capable:
+
+- Both are 156-qubit Heron devices with `if_else`, `measure`, and `reset`
+  in target — the same capability profile G5 verified on fez.
+- The QPU Drift Collector has archived **marrakesh since 2026-06-18**: 786
+  unique calibration cycles, median gap 1.2 h, most recent 2026-08-14
+  11:04, i.e. the device has recovered from the freeze and is cycling
+  normally. **`ibm_kingston` has no archive.** P-archive cannot be
+  computed without longitudinal history, so kingston would eliminate the
+  policy under test.
+
+### 3. What this costs, stated plainly
+
+**Session 1 (fez, 2026-08-07, seed 1001, 39 QPU-seconds, 54/54 circuits)
+does not pool with marrakesh sessions.** Cross-session comparison requires
+one device. It is retained and reported as a **hardware pilot**
+demonstrating that the full apparatus — probe, ranking, three-policy
+deploy, interleaving, parsing — executes end to end on real hardware. Its
+probe ranking and policy divergence are reported as pilot observations,
+never combined with marrakesh data.
+
+The session count restarts at zero on marrakesh. Target remains 4,
+minimum 3.
+
+### 4. Gates that must be re-run (all free, all before any session)
+
+Marrakesh is a different physical lattice. Nothing device-specific carries
+over.
+
+- **G1 (intervention distinctness)** — re-run on marrakesh cycles. The
+  policies may converge on this device even though they disagreed 100% of
+  the time on fez. **That outcome is a finding, not a failure**, and
+  triggers the section 9 convergence-dominated branch as written.
+- **G5 (compile)** — re-run against the marrakesh target: patch
+  enumeration, zero-SWAP, conditionals preserved at optimization_level=3,
+  layout honoured, no flag-qubit requirement.
+- **Stale-value guard (A3)** — re-run; exclude any patch containing a
+  qubit or coupler reporting error exactly 1.0.
+- **Stage A cost pilot** — re-run on marrakesh. The measured 3 QPU-seconds
+  was a fez number. **No cost figure carries across devices**, and Stage B
+  sizing is re-derived from the new measurement by the frozen formula.
+
+**G2 (Tier 0 correctness) does NOT need re-running.** It verified the code,
+syndrome table, and decoder in ideal simulation; those are device-
+independent.
+
+### 5. What does not change
+
+The frozen decoder and syndrome table; the three hardware circuit classes;
+duration-matched BARE on all three data qubits; both logical states
+reported separately; SESOI 0.010; the pilot-estimation study class with no
+confirmatory superiority claim; the staged-commit integrity rules and
+forbidden-analyses list; G6 probe validity; the A3 replication unit
+(>=12 h separation, calibration-age flagging, stale/fresh sensitivity
+analysis); the 40-minute total cap; and every section 10 guardrail.
+
+Prior-work positioning is unchanged. Note that Stein et al.
+(arXiv:2601.16123) evaluated repetition codes across IBM Fez, Kingston,
+and Pittsburgh, so cross-device work in this setting is established
+practice, not a novelty claim.
+
+### 6. Pre-declared, before any marrakesh data exists
+
+The Tier 1 simulation result — that patch selection from passive archived
+calibration failed discriminant validity under two independently derived
+scoring functions — was obtained on **fez** archive data. Whether it
+replicates on marrakesh is **unknown and untested**. It is not assumed
+here, and marrakesh G1/G4 outcomes will be reported as their own result,
+including if they contradict the fez finding.
+
+### 7. Deviation entry
+
+**D-B2 (2026-08-14).** Study backend migrated from `ibm_fez` to
+`ibm_marrakesh` after fez accumulated 24,668 pending jobs and failed to
+execute either a 24-PUB or a minimal 1-PUB job over 4 days and 24 hours
+respectively, while reporting operational. Migration is platform-driven,
+not results-driven: **no marrakesh data had been collected or examined at
+the time of this amendment.** Session 1 (fez) is reclassified as a
+hardware pilot and excluded from pooled analysis. All device-specific
+gates (G1, G5, stale-value guard, Stage A cost pilot) are re-run on the
+new backend before any confirmatory session.
