@@ -1,0 +1,161 @@
+{
+  "session": 11,
+  "seed": 1011,
+  "backend": "ibm_marrakesh",
+  "rounds": 3,
+  "probe_shots": 256,
+  "main_shots": 4096,
+  "candidates": [
+    [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    [
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    [
+      16,
+      3,
+      4,
+      5,
+      6
+    ],
+    [
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    [
+      53,
+      54,
+      55,
+      59,
+      75
+    ],
+    [
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    [
+      8,
+      9,
+      10,
+      11,
+      12
+    ]
+  ],
+  "submitted_utc": "2026-08-14T22:20:53Z",
+  "calibration_before": "2026-08-14 11:04:18-04:00",
+  "probe_job_id": "d9vp9hv2sl0c73bm88r0",
+  "probe_names": [
+    "probe|(2, 3, 4, 5, 6)|readout0",
+    "probe|(2, 3, 4, 5, 6)|readout1",
+    "probe|(2, 3, 4, 5, 6)|syndrome",
+    "probe|(3, 4, 5, 6, 7)|readout0",
+    "probe|(3, 4, 5, 6, 7)|readout1",
+    "probe|(3, 4, 5, 6, 7)|syndrome",
+    "probe|(1, 2, 3, 4, 5)|readout0",
+    "probe|(1, 2, 3, 4, 5)|readout1",
+    "probe|(1, 2, 3, 4, 5)|syndrome",
+    "probe|(16, 3, 4, 5, 6)|readout0",
+    "probe|(16, 3, 4, 5, 6)|readout1",
+    "probe|(16, 3, 4, 5, 6)|syndrome",
+    "probe|(10, 11, 12, 13, 14)|readout0",
+    "probe|(10, 11, 12, 13, 14)|readout1",
+    "probe|(10, 11, 12, 13, 14)|syndrome",
+    "probe|(53, 54, 55, 59, 75)|readout0",
+    "probe|(53, 54, 55, 59, 75)|readout1",
+    "probe|(53, 54, 55, 59, 75)|syndrome",
+    "probe|(9, 10, 11, 12, 13)|readout0",
+    "probe|(9, 10, 11, 12, 13)|readout1",
+    "probe|(9, 10, 11, 12, 13)|syndrome",
+    "probe|(8, 9, 10, 11, 12)|readout0",
+    "probe|(8, 9, 10, 11, 12)|readout1",
+    "probe|(8, 9, 10, 11, 12)|syndrome"
+  ],
+  "probe_scores": {
+    "[2, 3, 4, 5, 6]": 0.12109375,
+    "[3, 4, 5, 6, 7]": 0.15234375,
+    "[1, 2, 3, 4, 5]": 0.12109375,
+    "[16, 3, 4, 5, 6]": 0.1328125,
+    "[10, 11, 12, 13, 14]": 0.2109375,
+    "[53, 54, 55, 59, 75]": 0.16015625,
+    "[9, 10, 11, 12, 13]": 0.2578125,
+    "[8, 9, 10, 11, 12]": 0.26953125
+  },
+  "policies": {
+    "P_probe": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "P_archive": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "P_generic": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ]
+  },
+  "main_job_id": "d9vp9k50vrcc73bpjqtg",
+  "main_names": [
+    "P_generic|BARE1|1",
+    "P_probe|BARE2|1",
+    "P_archive|BARE0|1",
+    "P_probe|BARE2|0",
+    "P_archive|ENC_ACTIVE|1",
+    "P_generic|BARE2|1",
+    "P_archive|ENC_PASSIVE|1",
+    "P_archive|BARE2|1",
+    "P_probe|BARE1|0",
+    "P_probe|ENC_ACTIVE|1",
+    "P_probe|BARE1|1",
+    "P_generic|ENC_ACTIVE|1",
+    "P_generic|BARE2|0",
+    "P_probe|ENC_ACTIVE|0",
+    "P_archive|BARE0|0",
+    "P_generic|BARE0|0",
+    "P_probe|ENC_PASSIVE|0",
+    "P_generic|BARE0|1",
+    "P_generic|ENC_PASSIVE|1",
+    "P_archive|BARE1|1",
+    "P_generic|ENC_PASSIVE|0",
+    "P_generic|ENC_ACTIVE|0",
+    "P_archive|BARE2|0",
+    "P_archive|ENC_ACTIVE|0",
+    "P_generic|BARE1|0",
+    "P_probe|BARE0|1",
+    "P_archive|ENC_PASSIVE|0",
+    "P_probe|BARE0|0",
+    "P_probe|ENC_PASSIVE|1",
+    "P_archive|BARE1|0"
+  ]
+}

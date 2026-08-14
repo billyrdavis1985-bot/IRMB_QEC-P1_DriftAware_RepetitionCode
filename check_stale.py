@@ -47,3 +47,4 @@ for name, patch in (("P_probe   ", (3, 16, 23, 22, 21)),
     bad = [q for q in patch if q in stale_q]
     print(f"{name} {patch}: stale qubits -> {bad if bad else 'none'}")
 
+

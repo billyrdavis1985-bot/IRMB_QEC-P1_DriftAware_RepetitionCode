@@ -1,12 +1,12 @@
 {
   "stage": "A",
-  "job_id": "d9r5g4pdsedc73ag7hmg",
+  "job_id": "d9vp4ano3ppc73akkscg",
   "patch": [
-    140,
-    141,
-    142,
-    143,
-    144
+    2,
+    3,
+    4,
+    5,
+    6
   ],
   "shots": 512,
   "circuit_meta": [
@@ -92,25 +92,25 @@
   ],
   "checks": {
     "readout_probe_0": [
-      0.00977,
-      0.00586,
       0.00195,
-      0.0,
-      0.04688
+      0.0332,
+      0.01172,
+      0.01758,
+      0.00195
     ],
     "readout_probe_1": [
-      0.03125,
+      0.00586,
       0.00977,
-      0.00195,
+      0.01953,
       0.01172,
-      0.0332
+      0.0
     ],
-    "syndrome_false_detection_rate": 0.08008,
+    "syndrome_false_detection_rate": 0.07227,
     "enc_active_1_returned_data": true,
     "enc_active_1_distinct_outcomes": 4,
     "dummy_ff_returned_data": true,
     "dummy_ff_distinct_outcomes": 4,
-    "injected_x_logical_error": 0.9043,
+    "injected_x_logical_error": 0.9453,
     "injected_x_corrected": false
   },
   "metrics": {
@@ -123,9 +123,9 @@
       "status": "complete"
     },
     "timestamps": {
-      "created": "2026-08-07T22:11:31.367523Z",
-      "finished": "2026-08-07T23:06:09.885535Z",
-      "running": "2026-08-07T23:05:49.035293Z"
+      "created": "2026-08-14T22:09:46.743988Z",
+      "finished": "2026-08-14T22:12:34.021632Z",
+      "running": "2026-08-14T22:09:47.621737Z"
     }
   }
 }
