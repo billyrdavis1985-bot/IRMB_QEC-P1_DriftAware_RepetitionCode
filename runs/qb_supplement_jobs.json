@@ -1,0 +1,84 @@
+{
+  "job_id": "da0rpbqein7c73bclnt0",
+  "backend": "ibm_marrakesh",
+  "shots": 4096,
+  "rounds": 3,
+  "names": [
+    "P_archive|BAREMATCH0|0",
+    "P_archive|BAREMATCH1|0",
+    "P_archive|BAREMATCH2|0",
+    "P_archive|ENC_PASSIVE|0",
+    "P_archive|ENC_ACTIVE|0",
+    "P_archive|BAREMATCH0|1",
+    "P_archive|BAREMATCH1|1",
+    "P_archive|BAREMATCH2|1",
+    "P_archive|ENC_PASSIVE|1",
+    "P_archive|ENC_ACTIVE|1",
+    "P_probe_s11|BAREMATCH0|0",
+    "P_probe_s11|BAREMATCH1|0",
+    "P_probe_s11|BAREMATCH2|0",
+    "P_probe_s11|ENC_PASSIVE|0",
+    "P_probe_s11|ENC_ACTIVE|0",
+    "P_probe_s11|BAREMATCH0|1",
+    "P_probe_s11|BAREMATCH1|1",
+    "P_probe_s11|BAREMATCH2|1",
+    "P_probe_s11|ENC_PASSIVE|1",
+    "P_probe_s11|ENC_ACTIVE|1",
+    "P_probe_s14|BAREMATCH0|0",
+    "P_probe_s14|BAREMATCH1|0",
+    "P_probe_s14|BAREMATCH2|0",
+    "P_probe_s14|ENC_PASSIVE|0",
+    "P_probe_s14|ENC_ACTIVE|0",
+    "P_probe_s14|BAREMATCH0|1",
+    "P_probe_s14|BAREMATCH1|1",
+    "P_probe_s14|BAREMATCH2|1",
+    "P_probe_s14|ENC_PASSIVE|1",
+    "P_probe_s14|ENC_ACTIVE|1"
+  ],
+  "meta": [
+    {
+      "policy": "P_archive",
+      "patch": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "match_duration_dt": 5272,
+      "match_duration_us": 21.088,
+      "matched_to": "ENC_PASSIVE (control flow unschedulable)",
+      "enc_passive_depth": 65
+    },
+    {
+      "policy": "P_probe_s11",
+      "patch": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "match_duration_dt": 5284,
+      "match_duration_us": 21.136,
+      "matched_to": "ENC_PASSIVE (control flow unschedulable)",
+      "enc_passive_depth": 65
+    },
+    {
+      "policy": "P_probe_s14",
+      "patch": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "match_duration_dt": 5281,
+      "match_duration_us": 21.124,
+      "matched_to": "ENC_PASSIVE (control flow unschedulable)",
+      "enc_passive_depth": 65
+    }
+  ],
+  "submitted_utc": "2026-08-16T13:35:43Z",
+  "calibration_before": "2026-08-14 11:04:18-04:00"
+}

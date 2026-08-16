@@ -1043,3 +1043,120 @@ the time of this amendment.** Session 1 (fez) is reclassified as a
 hardware pilot and excluded from pooled analysis. All device-specific
 gates (G1, G5, stale-value guard, Stage A cost pilot) are re-run on the
 new backend before any confirmatory session.
+## Deviation D-B3 (2026-08-16) — BARE arm was not duration-matched
+### Discovered at analysis, before any Q-B result was reported.
+
+---
+
+### 1. What happened
+
+`stage_b.build_main_set` called `tier0.build_bare(state)` without the
+`delay_dt` argument, which defaults to **0**. The BARE arm in sessions
+11-14 therefore executed as prepare-and-measure — verified from the code
+path as depth 2 with zero `delay` instructions — while ENC_PASSIVE and
+ENC_ACTIVE ran three full syndrome-extraction rounds (logical depth 31,
+transpiled depth 74).
+
+The duration matching required by PREREGISTRATION section 3.3 was never
+applied. That requirement exists because the council review of v2
+identified an unmatched bare baseline as rigging the comparison:
+"comparing a long encoded circuit with an immediately measured bare qubit
+would almost guarantee an unfair result."
+
+### 2. Scope of the damage
+
+**Void:** every S = p_BARE / p_L value computed from sessions 11-14.
+Those compare an instantaneous measurement against a multi-round circuit
+and are biased hard in BARE's favour. They are not reported as
+break-even estimates in any form.
+
+**Unaffected:** Q-A' (both arms encoded), E4 (both arms encoded), G6
+(probe score vs measured p_L on encoded arms), and the postselection
+analysis. None of these involve the BARE arm.
+
+### 3. Remedy
+
+A supplementary duration-matched run was executed on 2026-08-16
+(job `da0rpbqein7c73bclnt0`, 37 QPU-seconds, ibm_marrakesh).
+
+**Deriving the match.** Qiskit cannot schedule circuits containing
+control flow — `TranspilerError: "Some options cannot be used with
+control flow. Got scheduling_method='alap', but the entire scheduling
+stage is not supported."` — and the transpiled ENC_ACTIVE exposes no
+duration. ENC_PASSIVE was scheduled instead: identical encoding, three
+rounds of CZ/measure/reset, identical final readout, everything except
+conditional-branch execution.
+
+Matched delays obtained per patch: 5272, 5284, 5281 dt (dt = 4 ns), i.e.
+~21.1 µs. **Independently cross-checked by hand** from target instruction
+durations (cz 17 dt, measure 671 dt, reset 680 dt, sx 9 dt), giving
+~5109 dt for the same sequence — within 3.1% of the scheduler, so the
+figure is not an artifact of the pass.
+
+**Residual mismatch, stated rather than hidden.** ENC_PASSIVE is
+*exactly* matched to the BARE delay. ENC_ACTIVE is *under*-matched by the
+feedforward-branch time, which is precisely the quantity that cannot be
+scheduled. BARE therefore receives slightly less decoherence exposure
+than ENC_ACTIVE, which biases **against** the encoded arm — it makes
+"encoding helps" harder to claim, not easier.
+
+A guard now raises rather than submitting if the delay fails to land, so
+an unmatched BARE cannot be executed silently a second time.
+
+### 4. Corrected Q-B result (single window)
+
+All three patches, both encoded arms, 4096 shots per cell.
+
+**|1_L⟩ — encoding helps, 6 of 6 cells**
+
+| patch | BARE mean | ENC_PASSIVE | S | ENC_ACTIVE | S |
+|---|---|---|---|---|---|
+| (1,2,3,4,5) | 0.1339 | 0.0798 | 1.68 | 0.0615 | 2.18 |
+| (2,3,4,5,6) | 0.1536 | 0.0835 | 1.84 | 0.0654 | 2.35 |
+| (10,11,12,13,14) | 0.1199 | 0.0637 | 1.88 | 0.0491 | 2.44 |
+
+**|0_L⟩ — overhead dominates, 6 of 6 cells**
+
+| patch | BARE mean | ENC_PASSIVE | S | ENC_ACTIVE | S |
+|---|---|---|---|---|---|
+| (1,2,3,4,5) | 0.0045 | 0.0188 | 0.24 | 0.0215 | 0.21 |
+| (2,3,4,5,6) | 0.0024 | 0.0308 | 0.08 | 0.0251 | 0.09 |
+| (10,11,12,13,14) | 0.0034 | 0.0183 | 0.19 | 0.0212 | 0.16 |
+
+**Baseline choice materially affects the |1_L⟩ magnitude.** The tables
+above use the arithmetic mean of the three data qubits. Section 3.3
+designates the *score-designated best constituent* as primary. Bare |1_L⟩
+error varies 2-3x across the three data qubits within a patch (e.g.
+0.0886, 0.1289, 0.1841), so the baseline matters. Against the best
+*measured* bare — labelled post-outcome descriptive only, per section 3.3
+— S falls to **1.11-1.33 (ENC_PASSIVE)** and **1.44-1.69 (ENC_ACTIVE)**.
+Still above 1, substantially less dramatic. Both are reported.
+
+### 5. Interpretation, bounded
+
+The distance-3 bit-flip repetition code, run as a three-round memory on
+ibm_marrakesh, **suppresses logical bit-value error for |1_L⟩ relative to
+a duration-matched physical qubit**, by a factor between roughly 1.1 and
+2.4 depending on the baseline convention, and **fails to do so for
+|0_L⟩**, where overhead exceeds any benefit by roughly 4-13x.
+
+The mechanism is consistent with the device physics and was not assumed
+in advance: over ~21 µs of matched idle, a bare |1⟩ relaxes toward |0⟩
+(measured bare |1_L⟩ error 0.077-0.235), and those relaxation events are
+exactly the X-channel bit flips this code corrects. A bare |0⟩ sits in
+the ground state and barely decays (measured 0.0005-0.0095), leaving
+nothing to protect and only overhead to pay.
+
+This is why section 3.4 requires both logical states to be reported
+separately before any averaging. Averaging them here would produce a
+number describing neither regime.
+
+**Claim boundary, unchanged:** this is suppression of logical *bit-value*
+error in a computational-basis memory. It is not a claim about a
+generally protected logical qubit, and no phase-coherence claim is made
+or implied.
+
+**Limitations:** single window; no cross-session replication; not paired
+by session; executed under a calibration cycle frozen since 2026-08-14
+11:04. The suppression figures are a point estimate from one job, not a
+replicated effect.
