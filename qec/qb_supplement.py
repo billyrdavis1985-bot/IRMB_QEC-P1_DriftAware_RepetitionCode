@@ -1,4 +1,4 @@
-"""QEC-P1 Q-B supplement — duration-matched BARE baseline.
+﻿"""QEC-P1 Q-B supplement â€” duration-matched BARE baseline.
 
 WHY THIS EXISTS
 ---------------
@@ -209,7 +209,7 @@ def report(out):
     from qec.analyze import bare_pL, enc_pL, wilson
     counts = out["counts"]
     print("\n" + "=" * 70)
-    print("Q-B SUPPLEMENT — DURATION-MATCHED BARE (single window)")
+    print("Q-B SUPPLEMENT â€” DURATION-MATCHED BARE (single window)")
     print("=" * 70)
     for m in out["stamp"]["meta"]:
         print(f"\n{m['policy']} {m['patch']}  matched delay = "
@@ -253,7 +253,11 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--submit", action="store_true")
     ap.add_argument("--retrieve", default=None)
+    ap.add_argument("--window", type=int, default=1)
     a = ap.parse_args()
+    global JOBS_FILE, OUT_FILE
+    JOBS_FILE = "runs/qb_supplement_%d_jobs.json" % a.window
+    OUT_FILE = "runs/qb_supplement_%d_result.json" % a.window
 
     if a.dry_run:
         n = len(PATCHES) * 2 * 5
@@ -264,7 +268,7 @@ def main():
         print("\npatches:")
         for label, patch in PATCHES.items():
             print(f"  {label:<12} {patch}")
-        print("\nDRY RUN — zero QPU. The scheduled duration is read from the")
+        print("\nDRY RUN â€” zero QPU. The scheduled duration is read from the")
         print("live target at submit time; it cannot be computed offline.")
         return
 
@@ -274,7 +278,7 @@ def main():
     if not a.submit:
         raise SystemExit("choose --dry-run, --submit, or --retrieve")
 
-    print("Q-B SUPPLEMENT — duration-matched BARE")
+    print("Q-B SUPPLEMENT â€” duration-matched BARE")
     print("This SPENDS QPU TIME.")
     if input("type SUBMIT to proceed: ").strip() != "SUBMIT":
         raise SystemExit("aborted")
@@ -286,3 +290,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
