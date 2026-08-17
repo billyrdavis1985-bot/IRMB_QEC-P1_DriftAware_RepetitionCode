@@ -1,0 +1,41 @@
+{
+  "patches": [
+    [
+      53,
+      54,
+      55,
+      59,
+      75
+    ],
+    [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  ],
+  "repeats": 6,
+  "shots": 4096,
+  "rounds": 3,
+  "state": 1,
+  "names": [
+    "p0|rep0",
+    "p1|rep0",
+    "p0|rep1",
+    "p1|rep1",
+    "p0|rep2",
+    "p1|rep2",
+    "p0|rep3",
+    "p1|rep3",
+    "p0|rep4",
+    "p1|rep4",
+    "p0|rep5",
+    "p1|rep5"
+  ],
+  "job_a": "da1ohmmg52gs73clta00",
+  "submitted_a": "2026-08-17T22:19:06Z",
+  "job_b": "da1oiee3kjvs73870epg",
+  "submitted_b": "2026-08-17T22:20:41Z",
+  "calibration": "2026-08-17 14:17:21-04:00"
+}
