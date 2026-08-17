@@ -1427,3 +1427,105 @@ directly.
 24 readout circuits x 4096 + 8 syndrome probes x 4096 + 8 deploy x 4096
 = ~164k circuit-shots, ~2.3 min projected at the measured anchor. Budget
 after: ~32 of 40 minutes remain.
+## Amendment A7 (2026-08-17) — Q-E: is the target itself stable?
+### Declared BEFORE the run.
+
+---
+
+### 1. Why this question exists now
+
+Five independent selection approaches have failed to predict d=3
+repetition-code logical error on ibm_marrakesh:
+
+| approach | gate | result |
+|---|---|---|
+| archive composite, v1 weights | G4 | FAIL |
+| archive composite, rho-fitted weights (A1) | G4 | FAIL (worse: 41%) |
+| measured probe, 256 shots, 5-qubit sum | G6 | FAIL, rho -0.072 |
+| measured probe, 4096 shots, data-qubit sum | A6 | FAIL, rho -0.335 |
+| archived-feature diagnosis | exploratory | refuted by A6 |
+
+Five failures with five different instruments invites a common-cause
+explanation rather than five separate ones.
+
+**Observation that prompted this (exploratory, two windows only).** The
+same eight patches, deployed 21 hours apart under identical protocol:
+
+| patch | 2026-08-16 p_L | 2026-08-17 p_L |
+|---|---|---|
+| (53,54,55,59,75) | 0.1265 (worst of 8) | 0.0537 (best of 8) |
+| (1,2,3,4,5) | 0.0576 | 0.0913 |
+| (10,11,12,13,14) | 0.0559 | 0.0618 |
+
+The worst patch became the best. If patch logical-error **rank** reorders
+faster than any prior measurement can be taken and acted upon, then no
+selection strategy can work, and the five failures above are one failure.
+
+That is a hypothesis. It has not been tested. This amendment tests it.
+
+### 2. Q-E (new question)
+
+> Over what timescale is a fixed patch's logical error rate stable, and
+> does its variation exceed binomial sampling noise?
+
+### 3. Design
+
+Two patches, chosen because they moved most between windows:
+`(53,54,55,59,75)` and `(1,2,3,4,5)`. ENC_ACTIVE, |1_L>, 4096 shots,
+identical circuits throughout.
+
+- **Job A — seconds scale.** 6 repeats of each patch, interleaved
+  (p1,p2,p1,p2,...), in one job. PUBs execute sequentially, so the
+  repeats span the job's execution.
+- **Job B — minutes scale.** The identical job resubmitted immediately
+  after A returns.
+
+Interleaving matters: if the two patches were run in blocks, any
+within-job drift would be confounded with patch identity.
+
+### 4. Frozen analysis
+
+Per patch, per job: chi-square test of homogeneity across the 6 repeats
+(are these 6 binomial samples drawn from one p?). Expected counts exceed
+1000, so the approximation is sound.
+
+Also reported: observed spread in p_L across repeats versus the binomial
+standard deviation `sqrt(p(1-p)/4096)`; Spearman rho between p_L and
+repeat index within a job (monotone drift); and the A-vs-B difference per
+patch (minutes-scale change).
+
+### 5. Pre-declared interpretation, both directions
+
+**If within-job repeats are binomially consistent (p > 0.05) but A and B
+differ:** instability lives on the minutes-to-hours scale. Since probe
+and deploy are separate job submissions with queue time between them, the
+probe would be measuring a device state that has already moved by
+deployment. That supports the common-cause explanation and identifies its
+timescale.
+
+**If within-job repeats already exceed binomial variation:** the target
+moves on the seconds scale, within a single job. No prior measurement of
+any kind could track it, and the five failures are fully explained.
+
+**If both A and B are stable and A ~ B:** the instability hypothesis is
+**not supported**. The 21-hour reordering would then be a slower effect,
+and the probe failures would require a different explanation — the probe
+had a stable target and still missed it. This outcome argues against the
+framing this amendment was written to test, and will be reported as
+such.
+
+### 6. Limits
+
+Two patches, one device, one afternoon. This bounds a timescale; it does
+not characterise the process. Stability of *two* patches does not
+establish stability of the *ranking* across all eight, which is the
+quantity selection actually depends on — that would require deploying all
+eight repeatedly and is out of scope here.
+
+No result from this amendment revises Q-A', Q-B, E4, G6 or A6. It is
+diagnostic: it constrains the explanation, not the findings.
+
+### 7. Cost
+
+24 circuits x 4096 shots = 98,304 circuit-shots, ~82 s projected.
+Budget after: ~30 of 40 minutes remain.
