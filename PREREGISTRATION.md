@@ -1314,3 +1314,116 @@ backend and re-run requirements; the 40-minute cap; all guardrails.
 
 The Tier 1 negative, Q-A' null, and the D-B3 deviation stand as reported
 and are not revisited by anything in this amendment.
+## Amendment A6 (2026-08-16) — redesigned probe, pre-declared test
+### Declared BEFORE the run. Exploratory findings that motivated it are
+### stated as motivation, never as evidence.
+
+---
+
+### 1. What prompted this
+
+G6-extended (window 1, 8 candidates deployed and probed in one job)
+returned within-session Spearman rho = **-0.072** between probe score and
+measured ENC_ACTIVE |1_L> logical error. The probe does not predict the
+outcome it exists to predict. That was a pre-declared failure condition
+(A5 section 1) and it fired.
+
+An **exploratory** feature diagnosis followed. It is reported here as
+motivation only:
+
+| feature | rho vs measured p_L |
+|---|---|
+| archived readout error, DATA qubits only | +0.619 |
+| archived readout error, all 5 qubits | +0.452 |
+| archived readout error, ANCILLA qubits only | -0.012 |
+| probe's own MEASURED readout | -0.036 |
+| archived T1 on data qubits (min) | -0.190 |
+| archived T1 on data qubits (mean) | +0.310 (wrong direction) |
+
+**That diagnosis does not establish anything.** Thirteen features were
+tested at n=8; rho = 0.619 corresponds to t = 1.93 on 6 df, and one to
+two features clearing |rho| > 0.5 is what the null predicts under that
+many comparisons. The relaxation hypothesis that motivated the diagnosis
+was **refuted** by it. Nothing in the table is treated as a finding.
+
+### 2. The one claim that does not rest on correlation
+
+Probe precision is arithmetic, not inference. At 256 shots, a per-qubit
+readout error measurement has
+
+    stderr = sqrt(p(1-p)/256)
+
+which for p = 0.01 is **0.0062, i.e. 62% of the value being measured**.
+Summed over the probe's ten measurements (5 qubits x 2 states), the
+composite carries roughly 20% error on a sum of ~0.10 — comparable to the
+between-patch spread the probe is meant to resolve.
+
+Required shots for a p = 0.01 measurement:
+
+| target stderr | shots per qubit-state |
+|---|---|
+| 50% of value | ~400 |
+| 20% of value | ~2,475 |
+| 10% of value | ~9,900 |
+
+The deployed probe used 256. **It is under-resolved by construction,
+independent of what does or does not correlate with p_L.**
+
+### 3. The test
+
+**Probe v2**, differing from the deployed probe in exactly two ways:
+
+1. **Shots: 256 -> 4096** per readout circuit (~16x, giving stderr near
+   16% of a p=0.01 value rather than 62%).
+2. **Aggregation: DATA qubits only.** The score sums readout error over
+   the three data qubits across both prepared states, and drops the two
+   ancilla terms.
+
+The syndrome false-detection probe is retained unchanged as a separate
+recorded quantity, but is **excluded from the v2 score** so the test
+isolates the two changes above.
+
+Everything else is identical: same 8 candidates, same ENC_ACTIVE |1_L>
+deployment at 4096 shots, same within-session single-job structure, same
+device.
+
+### 4. Frozen analysis and decision rule
+
+Primary: **within-session Spearman rho between the probe-v2 score and
+measured p_L**, across the 8 deployed candidates.
+
+| outcome | conclusion |
+|---|---|
+| rho >= 0.4 | probe v2 has discriminant validity. The G6 failure is attributable to probe precision and aggregation, not to measurement-based selection being unworkable. |
+| 0.2 <= rho < 0.4 | weak; reported as weak; no validity claim. |
+| rho < 0.2 | measurement-based patch selection does not predict d=3 repetition-code logical error on this device even with a 16x-better-resolved, correctly-aggregated probe. The G6 negative is not a probe-design artifact. |
+
+**Both outcomes are publishable and neither is preferred.** The third row
+is the stronger claim scientifically: it would say the failure is
+structural rather than fixable.
+
+Secondary, reported but not decisive: rho for the v1 score recomputed on
+the same window (does the old score still fail when better resolved?);
+rho for the syndrome-detection term alone; and archived readout_data_sum
+vs measured readout_data_sum, which tests the precision explanation
+directly.
+
+### 5. Limits declared in advance
+
+- **n = 8 candidates, one window.** A pass at this n is suggestive, not
+  established. Standard error on Spearman rho at n=8 is roughly 0.38.
+- A second window is run if the first passes, and the result is reported
+  per window rather than pooled.
+- This tests a probe **redesign**, not the original preregistered probe.
+  The deployed probe's failure (G6, rho -0.072) stands as reported and is
+  not revised by this amendment.
+- Q-A' and Q-C lose their premise under the G6 failure and are **not**
+  reinstated by a probe-v2 pass. They were run with the v1 probe. A pass
+  here informs future design; it does not retroactively validate
+  completed comparisons.
+
+### 6. Cost
+
+24 readout circuits x 4096 + 8 syndrome probes x 4096 + 8 deploy x 4096
+= ~164k circuit-shots, ~2.3 min projected at the measured anchor. Budget
+after: ~32 of 40 minutes remain.
