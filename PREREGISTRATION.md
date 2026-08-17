@@ -1160,3 +1160,157 @@ or implied.
 by session; executed under a calibration cycle frozen since 2026-08-14
 11:04. The suppression figures are a point estimate from one job, not a
 replicated effect.
+## Amendment A5 (2026-08-16) — declared additions to complete QEC-P1
+### Pre-declared BEFORE any of these runs. Purpose stated for each.
+
+---
+
+### 0. Why additions at all
+
+The pre-declared analysis returned three underpowered or unattributable
+results. These additions strengthen **existing** gates and questions.
+They are not a search for new significant effects in collected data.
+
+Each addition below states, before execution, what it measures and what
+outcome would count against the study's own findings.
+
+**Budget:** ~35 of 40 QPU-minutes remain (5 spent). Every addition here
+fits inside 5 minutes even at 3x the measured cost. The 40-minute cap is
+unchanged.
+
+**Q-A' is NOT extended, deliberately.** Its session-to-session sd is
+0.067 against SESOI 0.010; detecting that effect would need on the order
+of 350 sessions. More importantly the variance is structural, not
+statistical: each session compares a *different pair of patches*, so
+"policy" is confounded with "which patch was selected." Additional
+sessions cannot resolve that. Q-A' stands as reported: a null with
+variance exceeding any plausible effect, n=3 discordant.
+
+---
+
+### 1. G6-extended — probe validity, properly powered
+
+**Problem.** G6 currently rests on 7 points pooled across sessions, rho =
++0.414, sitting exactly on the declared 0.4 threshold. n=7 gives a
+standard error near 0.41, so the interval spans almost the whole range.
+The pooling also confounds patch quality with session-to-session device
+state. And session 11 contains direct counter-evidence: two patches with
+*identical* probe scores (0.12109) measured p_L of 0.1289 and 0.0430, a
+3x difference.
+
+**Addition.** Deploy **all 8 probed candidates** — not only the 2-3
+selected — with ENC_ACTIVE, |1_L>, 4096 shots, in the same job as the
+probe. This yields 8 **within-session** (probe score, measured p_L) pairs
+per window, blocked by session, with no cross-session confound.
+
+**Analysis (frozen now).** Spearman rho between probe score and measured
+p_L, computed **within each session** and reported per session, then
+combined across sessions. Thresholds unchanged: >=0.4 valid, 0.2-0.4
+weak, <0.2 fail.
+
+**What would count against the study.** If within-session rho is near
+zero, the probe does not predict logical error, probe-based selection has
+no discriminant validity on this device at 256 probe shots, and Q-A' and
+Q-C both lose their premise. That outcome is reportable and will be
+reported.
+
+**Sessions:** 2 minimum, 3 preferred. ~27 s each.
+
+---
+
+### 2. Q-B replication
+
+**Problem.** The corrected Q-B result (D-B3) is a **single window**. The
+|1_L> vs |0_L> asymmetry is the study's most interesting physical finding
+and currently has no replication.
+
+**Addition.** Repeat the duration-matched supplement in 2 further windows
+separated by >=12 h, identical protocol, same three patches.
+
+**Analysis (frozen now).** S reported per window per state per arm; the
+|1_L> and |0_L> strata never averaged together. The claim is a
+replicated effect only if the direction holds in all windows.
+
+**What would count against the study.** If S for |1_L> falls below 1 in a
+later window, the single-window result was not robust and will be
+reported as such.
+
+**Cost:** ~37 s per window (measured).
+
+---
+
+### 3. DUMMY_FF in-session — E4 attribution
+
+**Problem.** E4 found ENC_ACTIVE beating offline-decoded ENC_PASSIVE in
+12 of 12 cells. The design attributes that to in-circuit correction
+preventing error accumulation across rounds — but DUMMY_FF, the
+diagnostic that isolates control-path and latency cost, ran only in Stage
+A and never alongside the E4 comparison. E4 therefore describes an effect
+it cannot attribute.
+
+**Addition.** Include DUMMY_FF (same measure-and-conditional path, a
+conditional X on an already-measured-and-reset ancilla) on each deployed
+patch, |1_L>, in the same job as ENC_ACTIVE and ENC_PASSIVE.
+
+**Analysis (frozen now).** p_L(DUMMY_FF) minus p_L(ENC_PASSIVE) estimates
+the cost of traversing the conditional-control path with no corrective
+action. If that difference is small while ENC_ACTIVE beats ENC_PASSIVE
+substantially, the E4 benefit is attributable to correction rather than
+to any artifact of the dynamic-circuit path.
+
+**Validity condition, unchanged from section 3.3:** DUMMY_FF is used only
+if the transpiled circuit provably retains the conditional blocks. It
+carried 9/9 through optimization_level=3 at G5. If a future transpile
+drops them, the diagnostic is dropped and E4 remains unattributed.
+
+**Cost:** ~12 s.
+
+---
+
+### 4. Q-D (NEW QUESTION) — break-even versus syndrome-round count
+
+**This is a new question, declared here before any data exists.** It is
+not a re-analysis of collected data.
+
+**Motivation.** The Q-B result showed encoding helps |1_L> (S 1.1-2.4)
+and fails |0_L> (S 0.08-0.24) at three syndrome rounds. The proposed
+mechanism is that over ~21 µs of matched idle a bare |1> relaxes toward
+|0>, producing exactly the X-channel bit flips this code corrects, while
+a bare |0> sits in the ground state and offers nothing to correct.
+
+If that mechanism is right, the effect should be **dose-dependent in
+exposure time**.
+
+**Addition.** Repeat the duration-matched Q-B protocol at **1, 3, and 5
+syndrome rounds**, on one patch, both logical states. BARE delay is
+re-derived per round count from the ENC_PASSIVE schedule at that count.
+
+**Pre-declared expectation.** The **state asymmetry** — S(|1_L>) minus
+S(|0_L>) — should **increase** with round count, because longer exposure
+produces more relaxation for the code to correct while |0_L> gains
+nothing. No directional prediction is made for S itself in either state
+alone: correction opportunities and accumulated measurement/reset
+overhead both grow with rounds, and their balance is not predictable in
+advance from what is known here.
+
+**What would count against the mechanism.** If the state asymmetry is
+flat or shrinks with round count, the relaxation explanation for the
+Q-B result is not supported, and the |1_L> advantage requires a different
+account.
+
+**Cost:** 3 round-counts x 5 circuits x 2 states x 4096 shots, ~2 min.
+
+---
+
+### 5. Unchanged
+
+SESOI 0.010; pilot-estimation study class with no confirmatory
+superiority claim; frozen decoder and syndrome table; the claim boundary
+(logical bit-value error, computational basis, this code, this device —
+never a generally protected logical qubit, never a phase claim); both
+logical states reported separately before any averaging; postselection
+reporting rules; A3 replication unit and calibration-age flagging; A4
+backend and re-run requirements; the 40-minute cap; all guardrails.
+
+The Tier 1 negative, Q-A' null, and the D-B3 deviation stand as reported
+and are not revisited by anything in this amendment.
