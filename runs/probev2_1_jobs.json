@@ -1,0 +1,106 @@
+{
+  "window": 1,
+  "backend": "ibm_marrakesh",
+  "version": "v2",
+  "candidates": [
+    [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    [
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    [
+      16,
+      3,
+      4,
+      5,
+      6
+    ],
+    [
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    [
+      53,
+      54,
+      55,
+      59,
+      75
+    ],
+    [
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    [
+      8,
+      9,
+      10,
+      11,
+      12
+    ]
+  ],
+  "names": [
+    "probe|(2, 3, 4, 5, 6)|readout0",
+    "probe|(2, 3, 4, 5, 6)|readout1",
+    "probe|(2, 3, 4, 5, 6)|syndrome",
+    "probe|(3, 4, 5, 6, 7)|readout0",
+    "probe|(3, 4, 5, 6, 7)|readout1",
+    "probe|(3, 4, 5, 6, 7)|syndrome",
+    "probe|(1, 2, 3, 4, 5)|readout0",
+    "probe|(1, 2, 3, 4, 5)|readout1",
+    "probe|(1, 2, 3, 4, 5)|syndrome",
+    "probe|(16, 3, 4, 5, 6)|readout0",
+    "probe|(16, 3, 4, 5, 6)|readout1",
+    "probe|(16, 3, 4, 5, 6)|syndrome",
+    "probe|(10, 11, 12, 13, 14)|readout0",
+    "probe|(10, 11, 12, 13, 14)|readout1",
+    "probe|(10, 11, 12, 13, 14)|syndrome",
+    "probe|(53, 54, 55, 59, 75)|readout0",
+    "probe|(53, 54, 55, 59, 75)|readout1",
+    "probe|(53, 54, 55, 59, 75)|syndrome",
+    "probe|(9, 10, 11, 12, 13)|readout0",
+    "probe|(9, 10, 11, 12, 13)|readout1",
+    "probe|(9, 10, 11, 12, 13)|syndrome",
+    "probe|(8, 9, 10, 11, 12)|readout0",
+    "probe|(8, 9, 10, 11, 12)|readout1",
+    "probe|(8, 9, 10, 11, 12)|syndrome",
+    "deploy|(2, 3, 4, 5, 6)|ENC_ACTIVE",
+    "deploy|(3, 4, 5, 6, 7)|ENC_ACTIVE",
+    "deploy|(1, 2, 3, 4, 5)|ENC_ACTIVE",
+    "deploy|(16, 3, 4, 5, 6)|ENC_ACTIVE",
+    "deploy|(10, 11, 12, 13, 14)|ENC_ACTIVE",
+    "deploy|(53, 54, 55, 59, 75)|ENC_ACTIVE",
+    "deploy|(9, 10, 11, 12, 13)|ENC_ACTIVE",
+    "deploy|(8, 9, 10, 11, 12)|ENC_ACTIVE"
+  ],
+  "n_probe": 24,
+  "probe_shots": 4096,
+  "main_shots": 4096,
+  "rounds": 3,
+  "state": 1,
+  "probe_job_id": "da1od4e3kjvs738708t0",
+  "main_job_id": "da1od4m3kjvs738708tg",
+  "submitted_utc": "2026-08-17T22:09:22Z",
+  "calibration_before": "2026-08-17 14:17:21-04:00"
+}
