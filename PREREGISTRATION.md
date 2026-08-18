@@ -1529,3 +1529,100 @@ diagnostic: it constrains the explanation, not the findings.
 
 24 circuits x 4096 shots = 98,304 circuit-shots, ~82 s projected.
 Budget after: ~30 of 40 minutes remain.
+## Amendment A8 (2026-08-17) — powered E4 re-test
+### Declared BEFORE the run, after E4 failed to replicate.
+
+---
+
+### 1. What happened
+
+E4 (ENC_ACTIVE versus offline-decoded ENC_PASSIVE) was reported from
+sessions 11-14 as negative in **12 of 12 cells**, mean about -0.024.
+
+The DUMMY_FF attribution run (A5 section 3, 2026-08-17, 4096 shots per
+arm) did not replicate it:
+
+| patch | net E4 effect |
+|---|---|
+| (1,2,3,4,5) | -0.0042 |
+| (2,3,4,5,6) | **+0.0017** |
+| (10,11,12,13,14) | -0.0139 |
+
+Two of three favour ENC_ACTIVE and one reverses. Mean about -0.0055,
+roughly a quarter of the earlier magnitude. All three arms' Wilson
+intervals overlap in every patch, so nothing in that run is
+distinguishable.
+
+**Power check.** Resolving a difference of 0.005 at p ~ 0.07 requires
+approximately
+
+    n = 1.96^2 x 2 x 0.07 x 0.93 / 0.005^2  ~  20,000 shots per arm
+
+The run used 4096. It was underpowered by roughly 5x and could not have
+detected the effect it was testing.
+
+### 2. What this re-test can and cannot answer
+
+**Can:** whether an E4 effect exists at the present device state, with
+intervals tight enough to exclude or include zero.
+
+**Cannot:** why sessions 11-14 showed a magnitude four times larger. A
+single powered window is a third data point, not a reconciliation. Q-E
+established that absolute logical error moves ~31% over ten minutes and
+25-31% between windows, so a cross-window discrepancy of this size is
+consistent with device drift rather than with either measurement being
+wrong.
+
+Distinguishing "small real effect, previously overestimated" from
+"genuinely variable across device states" requires the same powered
+comparison in **multiple windows**. This amendment declares the powered
+protocol; windows accumulate as A3's >=12 h separation allows, and each
+is reported separately rather than pooled.
+
+### 3. Design
+
+Three arms — ENC_PASSIVE (offline-decoded), DUMMY_FF, ENC_ACTIVE — on the
+same three patches, |1_L>, 3 rounds.
+
+**Shots: 5 repeats x 4096 = 20,480 per arm**, pooled within window. Split
+into repeats rather than one large PUB so that (a) any per-PUB shot
+ceiling is avoided, and (b) within-job homogeneity can be checked by the
+same chi-square used in Q-E before pooling.
+
+**Interleaved**: repeat-major ordering, so every arm spans the job's
+execution rather than occupying one block. Q-E showed within-job
+behaviour is binomially stable but showed weak monotone drift in one
+cell, so block ordering could confound arm with time.
+
+### 4. Frozen analysis
+
+Per patch: pooled p_L per arm with Wilson intervals; the three
+differences with normal-approximation intervals on the difference,
+
+    SE = sqrt( p1(1-p1)/n1 + p2(1-p2)/n2 )
+
+reported as `net E4 = ACTIVE - PASSIVE`, `control-path cost = DUMMY_FF -
+PASSIVE`, `correction benefit = ACTIVE - DUMMY_FF`. Chi-square
+homogeneity across the 5 repeats is reported per arm before pooling; a
+failure there is reported and pooling proceeds with the caveat attached.
+
+### 5. Pre-declared outcomes
+
+- **Net E4 interval excludes zero, negative, in all three patches:** an
+  E4 effect exists at this device state; its magnitude is the reported
+  one, not the sessions 11-14 figure.
+- **Net E4 interval includes zero:** no detectable effect at ~20k shots.
+  Given the power calculation, that would place any true effect below
+  roughly 0.005, and the sessions 11-14 result would stand as
+  unreplicated at that magnitude.
+- **Signs disagree across patches with intervals excluding zero:** the
+  effect is patch-dependent, and E4 cannot be stated as a single number.
+
+E4 is **not** restored to a clean positive by any outcome here. It is
+reported as a re-tested, previously unreplicated result, with both the
+original and the re-test in view.
+
+### 6. Cost
+
+3 patches x 3 arms x 5 repeats x 4096 = 184,320 circuit-shots, ~2.6 min
+projected. Budget after: ~29 of 40 minutes.
