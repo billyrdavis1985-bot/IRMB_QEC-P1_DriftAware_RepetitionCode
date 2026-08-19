@@ -1626,3 +1626,112 @@ original and the re-test in view.
 
 3 patches x 3 arms x 5 repeats x 4096 = 184,320 circuit-shots, ~2.6 min
 projected. Budget after: ~29 of 40 minutes.
+## Deviation D-B4 (2026-08-19) — Q-D executed post-maintenance under a
+## materially different device state
+### Recorded before any Q-D result was written into the paper.
+
+---
+
+### 1. What happened
+
+Q-D (job `da2ct4rotlns7398cc30`) was submitted 2026-08-18 17:28 and
+queued through an `ibm_marrakesh` maintenance window, executing after it
+completed. `ibm_marrakesh` recalibrated at 2026-08-19 16:47; the Q-B
+windows had run under the cycle of 2026-08-14 11:04.
+
+### 2. The discrepancy
+
+Same patch `(1,2,3,4,5)`, same three syndrome rounds, same circuits,
+|1_L>:
+
+| source | date | BARE mean | ENC_PASSIVE | S |
+|---|---|---|---|---|
+| Q-B window 1 | 08-16 | 0.1339 | 0.0798 | **1.678** |
+| Q-B window 2 | 08-17 | 0.0948 | 0.0637 | **1.488** |
+| Q-D, r=3 | 08-19 | 0.1510 | **0.3530** | **0.428** |
+
+BARE is comparable across all three. ENC_PASSIVE is roughly **five times
+worse** in Q-D. Every S in Q-D falls below 1; encoding never reaches
+break-even in that window.
+
+The asymmetry is diagnostic in itself: BARE uses only a delay and a
+terminal measurement, while the encoded circuits add 28 two-qubit gates,
+9 mid-circuit measurements and 6 ancilla resets. Whatever changed acted
+on the encoded path specifically.
+
+### 3. What the published calibration does and does not explain
+
+Live calibration (2026-08-19 16:47) against the archived cycle
+(2026-08-14 11:04), restricted to the qubits and couplers this circuit
+uses:
+
+**CZ error rose sharply.** Summed over the four data-ancilla couplers,
+0.007614 to 0.014426, **+89%** (individual edges +51%, +14%, +66%,
++170%). Ancilla readout was essentially unchanged (+4%, +6%).
+
+**But it accounts for only part of the regression.** Twenty-eight
+two-qubit gates times the mean CZ increase gives an accumulated
++0.0477, against a measured ENC_PASSIVE |1_L> increase of **+0.2732** —
+approximately **17%**. The remainder involves mid-circuit measurement
+error and ancilla reset fidelity, **neither of which appears in published
+calibration data**.
+
+**And the calibration mispredicts the bare arm in the opposite
+direction.** T1 improved on every data qubit (96.8 to 209.0, 214.1 to
+286.6, 210.9 to 288.4 us). Relaxation over the matched 21.09 us exposure
+would fall from 0.196 to 0.096 on the first data qubit. Measured bare
+|1_L> instead went from 0.0948-0.1339 (Q-B) to 0.1510 (Q-D) — slightly
+worse.
+
+So the published figures **understate** the encoded regression and
+**predict an improvement in BARE that did not occur**.
+
+### 4. Consequences for reporting
+
+**Q-D's internal comparison stands.** The pre-declared quantity is the
+state asymmetry across round counts, and all three round counts executed
+**within a single job**. Q-E established that within-job behaviour is
+binomially stable, so the internal comparison is valid regardless of the
+absolute device state. The monotone increase (rho = +1.00 for both
+encoded arms) is reported as a result.
+
+**Q-D's absolute S values are NOT comparable to Q-B's and are not
+reported as break-even estimates.** Q-B (two windows, 12/12 by direction)
+remains the break-even result. Q-D's S values are reported only as the
+inputs to the asymmetry.
+
+**The mechanism evidence is unaffected**, because it too is internal:
+across 9.57 / 21.09 / 32.61 us of matched exposure, bare |1_L> grew 133%,
+bare |0_L> was flat at -8%, and encoded |1_L> grew only 24%. Those
+comparisons are within-job.
+
+### 5. Why this is reported as a result, not only a caveat
+
+This is the fourth independent instance in this study of published
+calibration failing to predict measured logical error:
+
+1. G4 — archive composite, original weights: failed discriminant validity.
+2. G4 — archive composite, weights fitted to measured correlations:
+   failed again, and slightly worse.
+3. G6 / probe v2 — measured probes at 256 and 4096 shots: rho -0.072 and
+   -0.335.
+4. **D-B4 — raw published calibration across a known device change:**
+   explains ~17% of a five-fold encoded regression and predicts the wrong
+   direction for the bare arm.
+
+The first three concerned *ranking patches*. This one concerns *a single
+patch across time*, where a physical change is known to have occurred and
+its magnitude is documented. The metadata still does not describe what
+the circuits experience.
+
+### 6. What would have prevented this
+
+Nothing available. The maintenance window was announced only on the
+dashboard after submission, and the job could not be recalled without
+losing its queue position — which, given this device's history in this
+study, was not a trivial cost. Executing Q-D as a single job is what
+preserves its validity.
+
+For future work: record the calibration timestamp at execution as well as
+at submission, and treat any job whose two timestamps differ as
+cross-cycle by default.

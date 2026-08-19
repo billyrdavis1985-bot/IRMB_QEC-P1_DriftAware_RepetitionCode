@@ -1,0 +1,56 @@
+{
+  "patch": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "round_counts": [
+    1,
+    3,
+    5
+  ],
+  "delays_dt": {
+    "1": 2392,
+    "3": 5272,
+    "5": 8152
+  },
+  "dt_seconds": 4e-09,
+  "shots": 4096,
+  "names": [
+    "r1|BARE0|0",
+    "r1|BARE1|0",
+    "r1|BARE2|0",
+    "r1|ENC_PASSIVE|0",
+    "r1|ENC_ACTIVE|0",
+    "r1|BARE0|1",
+    "r1|BARE1|1",
+    "r1|BARE2|1",
+    "r1|ENC_PASSIVE|1",
+    "r1|ENC_ACTIVE|1",
+    "r3|BARE0|0",
+    "r3|BARE1|0",
+    "r3|BARE2|0",
+    "r3|ENC_PASSIVE|0",
+    "r3|ENC_ACTIVE|0",
+    "r3|BARE0|1",
+    "r3|BARE1|1",
+    "r3|BARE2|1",
+    "r3|ENC_PASSIVE|1",
+    "r3|ENC_ACTIVE|1",
+    "r5|BARE0|0",
+    "r5|BARE1|0",
+    "r5|BARE2|0",
+    "r5|ENC_PASSIVE|0",
+    "r5|ENC_ACTIVE|0",
+    "r5|BARE0|1",
+    "r5|BARE1|1",
+    "r5|BARE2|1",
+    "r5|ENC_PASSIVE|1",
+    "r5|ENC_ACTIVE|1"
+  ],
+  "job_id": "da2ct4rotlns7398cc30",
+  "submitted_utc": "2026-08-18T21:28:51Z",
+  "calibration": "2026-08-18 16:38:39-04:00"
+}
