@@ -138,6 +138,10 @@ def fig2():
                         arrowprops=dict(arrowstyle="->", color=colours[pi],
                                         lw=1, alpha=0.6))
 
+    lo_all = min(min(l.get_ydata()) for l in ax.get_lines() if len(l.get_ydata()))
+    hi_all = max(max(l.get_ydata()) for l in ax.get_lines() if len(l.get_ydata()))
+    pad = (hi_all - lo_all) * 0.18
+    ax.set_ylim(lo_all - pad, hi_all + pad)
     ax.axvspan(-3.2, -1.6, color=GREY, alpha=0.10)
     ax.axvspan(-0.6, reps - 0.4, color=BLUE, alpha=0.05)
     ax.axvspan(xoff["job_b"] - 0.6, xoff["job_b"] + reps - 0.4,
@@ -154,7 +158,9 @@ def fig2():
     ax.set_ylabel("logical error  $p_L$")
     ax.set_title("Stable within a job; reordered across ten minutes",
                  fontsize=11)
-    ax.legend(fontsize=8, title="patch", title_fontsize=8, loc="lower left")
+    ax.legend(fontsize=8, title="patch", title_fontsize=8,
+              loc="upper center", bbox_to_anchor=(0.5, -0.04), ncol=2,
+              frameon=False)
     fig.text(0.5, -0.03, "Six interleaved repeats per job. Within a job the "
              "spread is binomial; ten minutes earlier the two patches "
              "differed by 1.7x.", ha="center", fontsize=7.5, color=GREY)
@@ -212,9 +218,12 @@ def fig3():
     ax.set_xticks(range(4)); ax.set_xticklabels(labels)
     ax.set_ylabel("suppression ratio  $S = p_{BARE}/p_L$")
     ax.set_yscale("log")
+    ax.set_yticks([0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 3.0])
+    ax.set_yticklabels(["0.05", "0.1", "0.2", "0.5", "1", "2", "3"])
+    ax.minorticks_off()
     ax.set_title("Encoding helps the excited state and not the ground state",
                  fontsize=11)
-    ax.legend(fontsize=8, loc="center right")
+    ax.legend(fontsize=8, loc="upper left", frameon=False)
     fig.text(0.5, -0.04, "Three patches per window, duration-matched bare "
              "baseline. All twelve cells replicate by direction across two "
              "windows 33 hours apart.", ha="center", fontsize=7.5, color=GREY)
@@ -269,7 +278,8 @@ def fig4():
     ax.set_xlabel("active minus offline-decoded  ($p_L$ difference, "
                   "negative favours correction)")
     ax.set_title("The same effect, under-resolved and resolved", fontsize=11)
-    ax.legend(fontsize=8, loc="lower left")
+    ax.legend(fontsize=8, loc="upper center", bbox_to_anchor=(0.5, -0.18),
+              ncol=2, frameon=False)
     fig.text(0.5, -0.06, "The underpowered run could not exclude zero and "
              "one patch reversed sign. At five times the shots every "
              "interval excludes zero.", ha="center", fontsize=7.5, color=GREY)
