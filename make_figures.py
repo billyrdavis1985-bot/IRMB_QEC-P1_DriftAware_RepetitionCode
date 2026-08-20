@@ -1,4 +1,4 @@
-"""QEC-P1 figures — built from the committed run data, no hardware.
+﻿"""QEC-P1 figures â€” built from the committed run data, no hardware.
 
 Four figures, one per load-bearing result:
 
@@ -42,8 +42,8 @@ def fig1():
     """Probe score vs measured p_L. Two windows, two probe designs."""
     panels = []
     for path, label, shots in (
-            ("runs/g6ext_1_result.json", "probe v1 — 256 shots, 5-qubit sum", 256),
-            ("runs/probev2_1_result.json", "probe v2 — 4096 shots, data qubits", 4096)):
+            ("runs/g6ext_1_result.json", "probe v1 â€” 256 shots, 5-qubit sum", 256),
+            ("runs/probev2_1_result.json", "probe v2 â€” 4096 shots, data qubits", 4096)):
         if not os.path.exists(path):
             continue
         d = json.load(open(path))
@@ -291,3 +291,4 @@ def fig4():
 if __name__ == "__main__":
     fig1(); fig2(); fig3(); fig4()
     print("\nfigures written to figures/")
+

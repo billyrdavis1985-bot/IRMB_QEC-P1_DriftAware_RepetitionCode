@@ -8,3 +8,5 @@ data/snapshots/
 savetoken.py
 
 data/snapshots_marrakesh/
+
+patch_figs.py
