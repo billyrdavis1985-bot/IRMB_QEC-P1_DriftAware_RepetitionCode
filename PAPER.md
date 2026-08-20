@@ -228,6 +228,14 @@ direction: the redesigned score at -0.335, the original recomputed at
 A sixteen-fold improvement in precision and a corrected aggregation did
 not help. The failure is structural, not a probe-design artifact.
 
+![Probe score against measured logical error](figures/fig1_probe_fails.png)
+
+*Figure 1. Probe score against measured logical error, for all eight
+candidates probed and deployed in the same window. Left: the deployed
+probe at 256 shots. Right: the redesigned probe at 4096 shots with
+data-qubit-only aggregation. Bars are 95% Wilson intervals. Neither
+shows a usable relationship.*
+
 ### 4.3 Why: the target moves faster than the measurement
 
 Two patches were deployed six times each, interleaved, within one job,
@@ -253,7 +261,14 @@ reorders on a ten-minute scale, the probe describes a device state that
 has already moved.
 
 This is a common cause for all the failures above, and it is testable
-rather than merely plausible. The complementary prediction — that
+rather than merely plausible.
+
+![Stability within a job against the ten-minute change](figures/fig2_stability.png)
+
+*Figure 2. Two patches, six interleaved repeats per job, two jobs two
+minutes apart. Diamonds at left are the same two patches measured ten
+minutes earlier, where they differed by a factor of 1.7. Within a job
+the spread is binomial; across ten minutes the ordering collapses.* The complementary prediction — that
 comparisons made *within* a job should survive — is confirmed in section
 4.4.
 
@@ -295,6 +310,13 @@ while the ratio S moved only **11.1%**. The two arms drift together, and
 the within-job pairing cancels most of it. That is the direct complement
 of section 4.3: comparisons separated in time lose information;
 comparisons made inside one job retain it.
+
+![Suppression ratio by logical state](figures/fig3_breakeven.png)
+
+*Figure 3. Suppression ratio against a duration-matched physical qubit,
+three patches per window, two windows 33 hours apart. All twelve cells
+replicate by direction: above break-even for the excited state, well
+below it for the ground state.*
 
 ### 4.5 The asymmetry is dose-dependent in exposure
 
@@ -386,6 +408,13 @@ the conditional path.**
 
 A post-hoc observation, untested: the effect scaled with baseline error
 across the three patches (relative effects −12.8%, −17.7%, −22.0%).
+
+![Underpowered against powered feedforward comparison](figures/fig4_e4_power.png)
+
+*Figure 4. The same comparison at two resolutions. At 4,096 shots per
+arm no interval excludes zero and one patch reverses sign; at 20,480
+every interval excludes zero. The effect was always there — the first
+test could not see it.*
 
 ---
 
