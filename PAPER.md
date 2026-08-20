@@ -12,36 +12,52 @@ awaiting the author's framing; they are marked.
 
 ## Abstract
 
-*(draft — compress after 1 and 5 are settled)*
+Published calibration data describes how a quantum processor drifts, and
+the natural inference is that it should be actionable: place a circuit on
+the qubits the record says are good today. We tested that inference for
+quantum error correction on a 156-qubit IBM Heron processor, using a
+distance-3 bit-flip repetition code and five distinct instruments — a
+longitudinal calibration archive under two independently derived
+weightings, a short measured probe at two precisions, and the raw
+published calibration itself.
 
-We asked whether calibration information can be used to choose *where* on
-a quantum processor to place a small error-correcting code. Five
-instruments were tried on a 156-qubit IBM Heron device: a longitudinal
-calibration-archive score under two independently derived weightings, a
-short measured probe at two precisions, and the raw published calibration
-itself. None predicted the logical error rate of a distance-3 bit-flip
-repetition code. Within-session Spearman correlations between probe score
-and measured logical error were -0.072 and -0.335.
+None predicted the logical error rate. Within-session rank correlations
+between probe score and measured logical error were −0.072 at 256 probe
+shots and −0.335 at 4096 shots with corrected aggregation; improving
+probe precision sixteen-fold did not help. Across a maintenance boundary
+where a physical change is documented, the published calibration accounts
+for roughly 17% of a five-fold regression in encoded error and predicts
+the unencoded arm in the wrong direction.
 
-A stability test suggests why. Logical error rates are binomially stable
-*within* a single job but move roughly 31% over ten minutes, and the
-ranking of candidate patches reorders on that timescale. Selection
-compares measurements separated in time; that separation is where the
-information is lost. Consistently, the paired comparisons made *inside* a
-single job survived: the ratio of encoded to bare error varied 11% across
-windows in which the absolute rates varied 25-31%.
+A stability measurement accounts for all five failures at once. Logical
+error is binomially stable within a single job but moves roughly 31%
+across ten minutes, and the ranking of candidate patches collapses over
+the same interval — two patches differing by a factor of 1.7 became
+statistically indistinguishable. Every instrument tested compares
+information gathered at one moment against performance at another, and
+that interval is where the information is lost.
 
-Those within-job comparisons produced two positive results. The code
-suppresses logical bit-value error for the excited logical state against
-a duration-matched physical qubit (S = 1.5 to 2.4, replicated across two
-windows) and fails to for the ground state (S = 0.08 to 0.48) — an
-asymmetry that grows monotonically with exposure time, as relaxation
-predicts. In-circuit feedforward correction outperforms offline decoding
-of the same syndrome records at 20,480 shots per arm, and the advantage
-is attributable to the correction rather than to the conditional-control
-path.
+The complementary prediction holds. Comparisons made within a single job
+survived: the ratio of encoded to bare error moved 11% between windows in
+which the absolute rates moved 25–31%. Those paired comparisons yield two
+positive results. Against a duration-matched physical qubit the code
+suppresses logical bit-value error for the excited logical state
+(S = 1.5–2.4, replicated across two windows) and fails to for the ground
+state (S = 0.08–0.48) — an asymmetry that rises monotonically with
+exposure time across 9.6, 21.1 and 32.6 µs, as relaxation predicts. And
+in-circuit feedforward correction outperforms offline decoding of the
+same syndrome records at 20,480 shots per arm, with every interval
+excluding zero and the benefit attributable to the correction rather than
+to the conditional-control path.
 
-Total quantum resource: 438 QPU-seconds across 26 jobs.
+The study is a preregistered pilot conducted on consumer-tier access:
+eight amendments, five logged deviations, and 438 QPU-seconds across 26
+jobs against a 40-minute cap. No confirmatory superiority claim is made.
+Every suppression figure reported is logical bit-value error in a
+computational-basis memory; no phase-coherence claim is made or implied.
+This is a boundary condition on probe-based selection rather than a
+refutation of it — one code distance, one topology, one device — with the
+timescale that defeats the method measured rather than assumed.
 
 ---
 
