@@ -5,9 +5,6 @@
 Billy R. Davis Jr. — Hudson Forge Technologies, IRMB program
 Independent research, self-funded
 
-**Draft.** Sections 3, 4 and 6 are written. Sections 1 and 5 are drafts
-awaiting the author's framing; they are marked.
-
 ---
 
 ## Abstract
