@@ -146,8 +146,8 @@ def fig2():
     ax.axvspan(-0.6, reps - 0.4, color=BLUE, alpha=0.05)
     ax.axvspan(xoff["job_b"] - 0.6, xoff["job_b"] + reps - 0.4,
                color=BLUE, alpha=0.05)
-    ax.text(-2.4, ax.get_ylim()[1] * 0.97, "10 min\nearlier", fontsize=7.5,
-            ha="center", va="top", color=GREY)
+    ax.text(-2.4, ax.get_ylim()[0] + (ax.get_ylim()[1]-ax.get_ylim()[0]) * 0.55,
+            "10 min\nearlier", fontsize=7.5, ha="center", va="center", color=GREY)
     ax.text((reps - 1) / 2, ax.get_ylim()[1] * 0.97, "job A",
             fontsize=8, ha="center", va="top", color=GREY)
     ax.text(xoff["job_b"] + (reps - 1) / 2, ax.get_ylim()[1] * 0.97,
