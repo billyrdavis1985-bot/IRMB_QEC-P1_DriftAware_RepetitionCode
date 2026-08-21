@@ -10,3 +10,9 @@ savetoken.py
 data/snapshots_marrakesh/
 
 patch_figs.py
+
+*.code-workspace
+snapshots.zip
+
+*.code-workspace
+snapshots.zip
