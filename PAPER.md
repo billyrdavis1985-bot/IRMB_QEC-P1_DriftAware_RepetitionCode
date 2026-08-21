@@ -12,71 +12,126 @@ awaiting the author's framing; they are marked.
 
 ## Abstract
 
-*(draft — compress after 1 and 5 are settled)*
+Published calibration data describes how a quantum processor drifts, and
+the natural inference is that it should be actionable: place a circuit on
+the qubits the record says are good today. We tested that inference for
+quantum error correction on a 156-qubit IBM Heron processor, using a
+distance-3 bit-flip repetition code and five distinct instruments — a
+longitudinal calibration archive under two independently derived
+weightings, a short measured probe at two precisions, and the raw
+published calibration itself.
 
-We asked whether calibration information can be used to choose *where* on
-a quantum processor to place a small error-correcting code. Five
-instruments were tried on a 156-qubit IBM Heron device: a longitudinal
-calibration-archive score under two independently derived weightings, a
-short measured probe at two precisions, and the raw published calibration
-itself. None predicted the logical error rate of a distance-3 bit-flip
-repetition code. Within-session Spearman correlations between probe score
-and measured logical error were -0.072 and -0.335.
+None predicted the logical error rate. Within-session rank correlations
+between probe score and measured logical error were −0.072 at 256 probe
+shots and −0.335 at 4096 shots with corrected aggregation; improving
+probe precision sixteen-fold did not help. Across a maintenance boundary
+where a physical change is documented, the published calibration accounts
+for roughly 17% of a five-fold regression in encoded error and predicts
+the unencoded arm in the wrong direction.
 
-A stability test suggests why. Logical error rates are binomially stable
-*within* a single job but move roughly 31% over ten minutes, and the
-ranking of candidate patches reorders on that timescale. Selection
-compares measurements separated in time; that separation is where the
-information is lost. Consistently, the paired comparisons made *inside* a
-single job survived: the ratio of encoded to bare error varied 11% across
-windows in which the absolute rates varied 25-31%.
+A stability measurement accounts for all five failures at once. Logical
+error is binomially stable within a single job but moves roughly 31%
+across ten minutes, and the ranking of candidate patches collapses over
+the same interval — two patches differing by a factor of 1.7 became
+statistically indistinguishable. Every instrument tested compares
+information gathered at one moment against performance at another, and
+that interval is where the information is lost.
 
-Those within-job comparisons produced two positive results. The code
-suppresses logical bit-value error for the excited logical state against
-a duration-matched physical qubit (S = 1.5 to 2.4, replicated across two
-windows) and fails to for the ground state (S = 0.08 to 0.48) — an
-asymmetry that grows monotonically with exposure time, as relaxation
-predicts. In-circuit feedforward correction outperforms offline decoding
-of the same syndrome records at 20,480 shots per arm, and the advantage
-is attributable to the correction rather than to the conditional-control
-path.
+The complementary prediction holds. Comparisons made within a single job
+survived: the ratio of encoded to bare error moved 11% between windows in
+which the absolute rates moved 25–31%. Those paired comparisons yield two
+positive results. Against a duration-matched physical qubit the code
+suppresses logical bit-value error for the excited logical state
+(S = 1.5–2.4, replicated across two windows) and fails to for the ground
+state (S = 0.08–0.48) — an asymmetry that rises monotonically with
+exposure time across 9.6, 21.1 and 32.6 µs, as relaxation predicts. And
+in-circuit feedforward correction outperforms offline decoding of the
+same syndrome records at 20,480 shots per arm, with every interval
+excluding zero and the benefit attributable to the correction rather than
+to the conditional-control path.
 
-Total quantum resource: 438 QPU-seconds across 26 jobs.
+The study is a preregistered pilot conducted on consumer-tier access:
+eight amendments, five logged deviations, and 438 QPU-seconds across 26
+jobs against a 40-minute cap. No confirmatory superiority claim is made.
+Every suppression figure reported is logical bit-value error in a
+computational-basis memory; no phase-coherence claim is made or implied.
+This is a boundary condition on probe-based selection rather than a
+refutation of it — one code distance, one topology, one device — with the
+timescale that defeats the method measured rather than assumed.
 
 ---
 
 ## 1. Introduction
 
-> **AUTHOR'S SECTION — draft only.** The framing below is a placeholder.
-> Why *you* asked this question, and what you expected, should be in your
-> words.
+A superconducting quantum processor is not the same machine from one hour
+to the next. Qubit lifetimes, gate errors and readout fidelities drift
+continuously, and the operators of these devices publish calibration data
+precisely so that users can account for it. The natural inference is that
+this data should be actionable: if the published record says some qubits
+are better than others today, a circuit placed on the better ones should
+perform better.
 
-Calibration-aware qubit selection has a literature. Tannu and Qureshi
-(ASPLOS 2019) used 52 days of IBM characterisation data for
-variation-aware allocation; Murali et al. (ASPLOS 2019) exploited spatial
-and temporal calibration variation for noise-adaptive mapping. More
-recently, probe-based selection has been reported to reduce logical error
-substantially for repetition codes on IBM hardware.
+That inference has a literature behind it. Tannu and Qureshi analysed 52
+days of IBM characterisation data and proposed variation-aware qubit
+allocation; Murali and colleagues used spatial and temporal calibration
+variation for noise-adaptive compiler mapping. Both reported meaningful
+improvements in circuit fidelity from choosing where to compute. More
+recently the same logic has been applied to quantum error correction,
+where selection is reported to reduce logical error substantially when
+candidate patches are ranked by short measured probes rather than by
+published metadata.
 
-The premise is reasonable: devices drift, published calibration describes
-that drift, so choosing well-calibrated qubits should improve outcomes.
+Error correction raises the stakes on that inference. A distance-3 code
+spends five physical qubits, twenty-eight two-qubit gates and nine
+mid-circuit measurements to protect one logical bit. At current error
+rates the overhead is comparable to the errors being corrected, so the
+question of *where* to place the code is not a marginal optimisation —
+it plausibly decides whether the code helps at all.
 
-This study asked the narrow version of that question a self-funded
-researcher can actually answer. A Raspberry Pi has been recording IBM
-calibration hourly since June 2026 — 707 cycles for `ibm_fez`, 786 for
-`ibm_marrakesh`, median gap 1.2 hours. Does that archive, or a short
-measured probe, predict the logical error rate of a distance-3 bit-flip
-repetition code well enough to choose where to put it?
+This study asks the narrow version of that question:
 
-The answer is no, and the interesting part is why.
+> Does a longitudinal calibration archive, or a short measured probe,
+> predict the logical error rate of a distance-3 bit-flip repetition code
+> well enough to choose where to place it?
 
-**What this is not.** Not a fault-tolerance claim. Not a claim about
-phase coherence — every suppression figure here is logical *bit-value*
-error in a computational-basis memory. Not a contradiction of the
-probe-selection literature: this is one code distance, one patch size,
-one decoder, on one device, and the differences are named in section 7.
+**The constraint shapes the question.** This work was conducted on
+consumer-tier access — an open-plan IBM Quantum account with a
+promotional allocation, and a Raspberry Pi 5 polling the calibration API
+hourly since June 2026. That is not incidental framing. A researcher with
+dedicated hardware access can afford to re-measure continuously; a
+researcher on an open plan cannot, and must instead rely on information
+gathered before the run. Whether that information survives the interval
+between gathering and acting is therefore a practical question for anyone
+working under the same constraint, and it is not one the existing
+literature addresses directly.
 
----
+The archive itself was built for an earlier study, where calibration
+drift emerged as a confound that could not be isolated. Turning that
+confound into an instrument — hourly snapshots, deduplicated by
+calibration cycle, 707 cycles for one device and 786 for another — made
+it possible to ask whether the drift record is good for anything beyond
+describing what already happened.
+
+The answer developed here is no, across five distinct instruments, and
+the interesting part is the mechanism. Sections 3 and 4 report the
+failures and then the stability measurement that accounts for them.
+Sections 4.4 through 4.7 report what did work: the comparisons the study
+could make *within* a single job, which include a replicated break-even
+result and a powered confirmation that in-circuit feedforward correction
+outperforms offline decoding.
+
+**What this is not.** No fault-tolerance claim is made. No claim about
+phase coherence is made or implied — the code protects a single error
+channel, and every suppression figure reported here is logical
+*bit-value* error in a computational-basis memory. And this is not a
+contradiction of the probe-selection literature. It is one code distance,
+one patch topology, one decoder and one device; the differences from
+reported successes are named in section 7, and a positive result on other
+hardware would bound where this negative applies rather than overturn it.
+
+Total quantum resource consumed: 438 QPU-seconds across 26 jobs, against
+a preregistered budget cap of 40 minutes.
+
 
 ## 2. Methods
 
@@ -418,38 +473,130 @@ test could not see it.*
 
 ---
 
+### 4.8 A pre-declared question that lost its premise
+
+Amendment A2 declared a third question alongside the policy comparison and
+the break-even characterisation: an independent point estimate of the
+crossover threshold at which measured-probe selection begins to help,
+reported in prior work as a baseline logical error rate of 0.112 and
+flagged there as derived post-hoc from the dataset that demonstrated the
+effect.
+
+Regressing the probe-minus-generic difference in logical error on the
+generic baseline across four sessions gives a slope of -0.297 and an
+x-intercept of **0.0667**, with a bootstrap 95% interval of
+[-0.0003, 0.0869]. The direction is consistent with that work - the
+probe's relative advantage grows as baseline error rises - at a lower
+threshold than reported.
+
+**That estimate should not be used, and is reported here only because it
+was declared in advance.** It presumes that the probe carries information
+about which patch will perform better; section 4.2 establishes that it
+does not, at either precision tested. A crossover in the benefit of a
+selection method cannot be estimated when the method has no discriminant
+validity on the device in question. At four sessions the interval also
+includes zero.
+
+Amendment A6 stated this consequence before the probe-validity test was
+run: a pass would not have reinstated this question, and a failure would
+remove its premise. The failure occurred. The question is therefore
+reported and withdrawn rather than quietly omitted.
+
 ## 5. Discussion
 
-> **AUTHOR'S SECTION — draft only.** What you think this means should be
-> in your words. Below is the argument the evidence supports, as a
-> starting point.
+### 5.1 One failure, not five
 
-Five instruments failed, and they failed for one reason rather than five.
-Each compared information gathered at one time against performance at
-another, and the quantity being predicted reorders on a timescale shorter
-than that gap. The archive is stale by hours or days; the probe is stale
-by minutes; and the published calibration, across a maintenance boundary,
-mispredicts in both directions.
+Five instruments were tried: a calibration-archive score under two
+independently derived weightings, a measured probe at two precisions, and
+the raw published calibration across a known device change. It would be
+possible to explain each failure separately — the archive is stale, the
+probe is noisy, the calibration omits mid-circuit measurement quality.
+Each of those explanations is partly true.
 
-The complementary evidence is what makes this more than a null. Every
-comparison this study made *inside* a single job held up: the encoded-to-
-bare ratio moved 11% where absolute rates moved 25-31%; the state
-asymmetry scaled cleanly with exposure; the feedforward benefit resolved
-at power with a clean attribution. The information is not absent from the
-device. It is absent from the *interval between measuring and acting*.
+But they share a structure. Every one of these instruments compares
+information gathered at one moment against performance at another. The
+archive's gap is hours to days; the probe's is minutes, since probe and
+deployment are separate job submissions with queue time between them; the
+calibration's, across the maintenance boundary in section 4.6, was days.
 
-This is a boundary condition on probe-based selection rather than a
-contradiction of it. Reported successes use larger code distances, longer
-chains, different decoders and different devices. What this study adds is
-a case where the method fails, with the timescale that defeats it
-measured rather than assumed.
+Section 4.3 measured what happens across that gap. Logical error is
+binomially stable within a single job and moves roughly 31% across ten
+minutes, with the ordering of candidate patches collapsing over the same
+interval. Two patches that differed by a factor of 1.7 became
+statistically indistinguishable.
 
-The implication for future work points inward. If prior measurement
-cannot track the device, the remaining option is measurement from *within*
-the running computation — the syndrome stream itself as a sensor. That is
-the direction this program takes next.
+If the ranking reorders faster than the measure-then-act cycle, no
+instrument that respects that cycle can succeed, regardless of how well
+it is built. Improving the probe sixteen-fold in precision did not help,
+and would not be expected to.
 
----
+### 5.2 The complementary evidence
+
+A negative result of this kind is only as strong as its control. If the
+device were simply too noisy to measure anything, the study would have
+produced nothing but nulls.
+
+It did not. Every comparison made *inside* a single job held up:
+
+- The ratio of encoded to bare error moved 11% between windows in which
+  the absolute rates moved 25-31%. The two arms drift together, and
+  pairing them within a job cancels most of it.
+- The state asymmetry scaled monotonically with exposure time across
+  three round counts in one job, exactly as relaxation predicts.
+- The feedforward benefit resolved cleanly at 20,480 shots per arm, with
+  the correction and the control path separated.
+
+The information is not absent from the device. It is absent from the
+interval between measuring and acting.
+
+### 5.3 What this does and does not say about selection
+
+This is a boundary condition, not a refutation. Reported successes in
+probe-based selection use larger code distances, longer chains, different
+decoders and different devices. Any of those differences could matter,
+and section 7 names them.
+
+What this study adds is a case where the method fails, with the timescale
+that defeats it measured rather than assumed. That is more useful than
+another positive result would have been, because a positive result
+establishes that selection *can* work somewhere, while a mechanism
+establishes *where it cannot*.
+
+The practical reading for anyone working under similar constraints: if
+your measure-to-execute latency exceeds the device's reordering
+timescale, selection is not the lever. Budget the shots into the
+measurement you actually care about instead.
+
+### 5.4 The instrument that was not tried
+
+If prior measurement cannot track the device, one option remains:
+measurement from inside the running computation.
+
+A repetition code already generates a stream of syndrome data at every
+round. That stream is produced by the same physical qubits, at the same
+moment, under the same conditions as the computation it protects — it has
+no measure-to-act gap at all. Existing work has shown that drifting noise
+parameters can be recovered from syndrome statistics.
+
+This study has an unusual position from which to extend that: an
+independent external telemetry stream, collected hourly for months, that
+can be compared against the internal syndrome record. Whether the two
+agree, and which leads the other, is a question neither stream can answer
+alone. That is where this program goes next.
+
+### 5.5 A note on what the negative cost
+
+The study consumed 438 QPU-seconds. The five failures cost a small
+fraction of that; most of the budget went to the confirmatory work in
+sections 4.4 through 4.7, and to re-running an underpowered test properly
+after its null was briefly mistaken for a reversal.
+
+That ratio is worth recording. Under a constrained budget, the temptation
+is to spend everything on the primary question and report whatever comes
+back. The gates that killed the primary question here — a probe-validity
+test that could fail, and did, twice — cost 54 QPU-seconds between them.
+They are the reason the rest of the study is interpretable.
+
 
 ## 6. Limitations
 
@@ -534,3 +681,10 @@ its method.
 - **An exploratory correlation** of +0.619 was flagged at the time as
   indistinguishable from a multiple-comparisons artifact across thirteen
   features at n = 8. A pre-declared test subsequently refuted it.
+- **A pre-declared question was initially omitted.** The crossover
+  estimate declared in Amendment A2 had lost its premise when the
+  probe-validity gate failed, and was left out of the first draft rather
+  than reported and withdrawn. An external reviewer's misreading of the
+  figures involved is what surfaced the omission. It is now section 4.8.
+  A preregistered question requires a reported outcome even when that
+  outcome is that the question can no longer be asked.
