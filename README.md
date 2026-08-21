@@ -1,5 +1,7 @@
 # QEC-P1 — Drift-Aware Repetition-Code Break-Even Study
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22050537.svg)](https://doi.org/10.5281/zenodo.22050537)
+
 **Can calibration data tell you where to put an error-correcting code?**
 
 Five instruments were tried on a 156-qubit IBM Heron processor. None
