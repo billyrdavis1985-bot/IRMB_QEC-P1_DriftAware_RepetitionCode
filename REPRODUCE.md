@@ -4,7 +4,7 @@ Everything except the hardware execution reproduces without an IBM
 account. The hardware results can be re-analysed from the committed
 counts without spending any quantum time.
 
-Total original cost: **438 QPU-seconds across 26 jobs**.
+Total original cost: **475 QPU-seconds across 26 jobs**.
 
 ---
 

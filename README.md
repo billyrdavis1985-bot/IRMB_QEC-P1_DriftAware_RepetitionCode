@@ -9,7 +9,7 @@ predicted the logical error rate of a distance-3 bit-flip repetition
 code. A stability measurement explains why — and the same measurement
 explains what *did* work.
 
-**Total quantum resource: 438 QPU-seconds across 26 jobs.**
+**Total quantum resource: 475 QPU-seconds across 26 jobs.**
 
 📄 **[Full write-up: PAPER.md](PAPER.md)** ·
 🔬 **[Preregistration and all amendments](PREREGISTRATION.md)** ·
@@ -96,7 +96,7 @@ than theoretical.
 
 ```
 PAPER.md              full write-up
-PREREGISTRATION.md    staged preregistration, 8 amendments, 5 deviations
+PREREGISTRATION.md    staged preregistration, 8 amendments, 6 deviations
 REPRODUCE.md          how to re-run everything, by access level
 runs/README.md        every job ID with device, date and role
 runs/                 immutable counts and job stamps
@@ -112,7 +112,7 @@ data/snapshots_*/     converted calibration archive (gitignored; see REPRODUCE)
 **Staged preregistration.** A Stage A engineering pilot with an explicit
 forbidden-analyses list — enforced in code, not left to discipline — then
 a Stage B commit fixing the matrix and the analysis model before any
-confirmatory run. Eight amendments and five deviations, each timestamped
+confirmatory run. Eight amendments and six deviations, each timestamped
 before the run it governs.
 
 **Gates that could fail, and did.** The probe-validity gate was applied to
@@ -120,7 +120,7 @@ the probe method with the same threshold that had already killed the
 archive method. It failed twice. Those two runs cost 54 QPU-seconds
 between them and are the reason the rest of the study is interpretable.
 
-**Errors are published.** [Section 9 of PAPER.md](PAPER.md) lists seven,
+**Errors are published.** [Section 9 of PAPER.md](PAPER.md) lists eight,
 including a parser bug that made a hardware check read 0.9043 where the
 truth was 0.1582, a break-even result voided because a control arm was
 never duration-matched, a proposed mechanism refuted by the analysis that

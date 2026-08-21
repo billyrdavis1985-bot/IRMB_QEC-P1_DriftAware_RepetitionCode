@@ -1,10 +1,11 @@
+
 # `runs/` — evidence provenance
 
 Every hardware job executed for QEC-P1, what it was for, and what it does
 and does not support. Read this before interpreting anything in this
 directory.
 
-**Total metered: 438 QPU-seconds (7.30 minutes) across 26 completed jobs**,
+**Total metered: 475 QPU-seconds (7.92 minutes) across 26 completed jobs**,
 against a preregistered 40-minute cap. One job (Q-D) was queued at the time
 of writing.
 
@@ -46,7 +47,7 @@ marrakesh sessions — cross-session comparison requires one device.
 | `d9t3ej1dsedc73aie9e0` | 08-10 | 4 | Session 2 probe, resubmitted. Executed ~8 days later. **No matching main job; not used.** Evidence of queue latency only. |
 | `d9v40ano3ppc73ajptm0` | 08-13 | 2 | Minimal queue diagnostic: 1 PUB, 1 qubit, 10 shots. Queued 5 days. **Not science** — it established that the stall was device-side, not job-size or code related. |
 
-### ibm_marrakesh (the study) — 20 jobs, 390 s
+### ibm_marrakesh (the study) — 21 jobs, 427 s
 
 | job id | date | QPU s | role |
 |---|---|---|---|
@@ -70,7 +71,7 @@ marrakesh sessions — cross-session comparison requires one device.
 | `da1onte3kjvs73870l80` | 08-17 | 37 | **Q-B supplement, window 2.** 12/12 cells replicate direction. |
 | `da1qa6ug52gs73clvp30` | 08-17 | 13 | DUMMY_FF attribution at 4096 shots. **UNDERPOWERED (~5x)** and inconclusive; retained because it shows what an underpowered test looks like beside a powered one. |
 | `da1qf4iein7c73bdom90` | 08-17 | 54 | **Powered E4 re-test**, 20,480 shots/arm. E4 confirmed, intervals exclude zero in all three patches; attribution to correction rather than control path. |
-| `da2ct4rotlns7398cc30` | 08-18 | queued | Q-D rounds sweep, 1/3/5 rounds. Delays 2392/5272/8152 dt (9.57/21.09/32.61 us). |
+| `da2ct4rotlns7398cc30` | 08-19 | 37 | Q-D rounds sweep, 1/3/5 rounds. Delays 2392/5272/8152 dt (9.57/21.09/32.61 us). |
 
 ---
 

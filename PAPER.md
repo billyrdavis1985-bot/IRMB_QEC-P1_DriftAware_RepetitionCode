@@ -51,7 +51,7 @@ excluding zero and the benefit attributable to the correction rather than
 to the conditional-control path.
 
 The study is a preregistered pilot conducted on consumer-tier access:
-eight amendments, five logged deviations, and 438 QPU-seconds across 26
+eight amendments, six logged deviations, and 475 QPU-seconds across 26
 jobs against a 40-minute cap. No confirmatory superiority claim is made.
 Every suppression figure reported is logical bit-value error in a
 computational-basis memory; no phase-coherence claim is made or implied.
@@ -129,7 +129,7 @@ one patch topology, one decoder and one device; the differences from
 reported successes are named in section 7, and a positive result on other
 hardware would bound where this negative applies rather than overturn it.
 
-Total quantum resource consumed: 438 QPU-seconds across 26 jobs, against
+Total quantum resource consumed: 475 QPU-seconds across 26 jobs, against
 a preregistered budget cap of 40 minutes.
 
 
@@ -139,7 +139,7 @@ a preregistered budget cap of 40 minutes.
 
 Staged: a Stage A engineering pilot with an explicit forbidden-analyses
 list, then a Stage B confirmatory commit fixing the matrix and the
-analysis model. Eight amendments (A1-A8) and five deviations (D-A1, D-A2,
+analysis model. Eight amendments (A1-A8) and six deviations (D-A1, D-A2,
 D-B1 through D-B4), each timestamped before the run it governs. The
 smallest-effect-of-interest was fixed at 0.010 before any simulation and
 never revised. The full document is `PREREGISTRATION.md`.
@@ -586,7 +586,7 @@ alone. That is where this program goes next.
 
 ### 5.5 A note on what the negative cost
 
-The study consumed 438 QPU-seconds. The five failures cost a small
+The study consumed 475 QPU-seconds. The five failures cost a small
 fraction of that; most of the budget went to the confirmatory work in
 sections 4.4 through 4.7, and to re-running an underpowered test properly
 after its null was briefly mistaken for a reversal.

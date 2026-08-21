@@ -28,10 +28,10 @@ abstract: >-
   same syndrome records at 20,480 shots per arm, attributable to the
   correction rather than the conditional-control path.
 
-  Includes the full staged preregistration with eight amendments and five
+  Includes the full staged preregistration with eight amendments and six
   logged deviations, a job-level provenance record for all 26 hardware
   jobs, and a published catalogue of errors found and corrected during the
-  study. Total quantum resource: 438 QPU-seconds.
+  study. Total quantum resource: 475 QPU-seconds.
 authors:
   - family-names: Davis
     given-names: "Billy R."
