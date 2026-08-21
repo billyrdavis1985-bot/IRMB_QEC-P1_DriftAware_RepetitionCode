@@ -1,169 +1,165 @@
-# hf-critic — Hudson Forge Reasoning Critic
+# QEC-P1 — Drift-Aware Repetition-Code Break-Even Study
 
-**Fine-tuning open-source LLMs into reasoning-process evaluators** — models that
-judge the *quality of reasoning* behind an answer, not just whether the answer
-is correct. Part of the IRMB research program at Hudson Forge Technologies LLC,
-and developed as an MLOps coursework project.
+**Can calibration data tell you where to put an error-correcting code?**
+
+Five instruments were tried on a 156-qubit IBM Heron processor. None
+predicted the logical error rate of a distance-3 bit-flip repetition
+code. A stability measurement explains why — and the same measurement
+explains what *did* work.
+
+**Total quantum resource: 438 QPU-seconds across 26 jobs.**
+
+📄 **[Full write-up: PAPER.md](PAPER.md)** ·
+🔬 **[Preregistration and all amendments](PREREGISTRATION.md)** ·
+🧾 **[Evidence provenance: every job ID and role](runs/README.md)** ·
+🔁 **[Reproduce it](REPRODUCE.md)**
 
 ---
 
-## Overview
+## The result in one figure
 
-A reasoning critic takes a question and a candidate response and returns a fixed
-assessment contract:
+![Stability within a job against the ten-minute change](figures/fig2_stability.png)
 
-```
-VERDICT: sound | flawed | unsound
-STEP ANALYSIS: ...
-SEVERITY: 1-5
-REVISED ANSWER: ... (if flawed)
-```
+Two patches, six interleaved repeats per job. Within a job, logical error
+is binomially stable. Ten minutes earlier — the diamonds at left — those
+same two patches differed by a factor of 1.7. By the time the job ran,
+they were indistinguishable.
 
-The project fine-tunes small, open-weight models into this role using a corpus
-of hand-written critique examples mixed with external instruction data, then
-evaluates them against a held-out benchmark reserved as a contamination
-firewall. Two models were trained on identical data and compared head-to-head.
+Selection compares a measurement taken at one moment against performance
+at another. That interval is where the information is lost.
 
-The intended use is as **lightweight, local, specialist verification
-components** — a cheap always-on reasoning check, not a primary model.
+---
 
-## Results
+## What was found
 
-| model            | verdict_rate | structure_rate | trap_detection | mean_score_3 |
-|------------------|--------------|----------------|----------------|--------------|
-| base Qwen3-8B    | 0.525        | 0.500          | 0.975          | 2.000        |
-| tuned Qwen3-8B   | 0.950        | 0.950          | 0.900          | 2.800        |
-| base Mistral-7B  | 1.000        | 0.950          | 0.800          | 2.750        |
-| tuned Mistral-7B | 1.000        | 1.000          | 0.850          | 2.850        |
+### Five instruments, no prediction
 
-Evaluated on a 40-question stratified holdout. See
-[`experiments.md`](experiments.md) for full run logs and per-category deltas.
+| instrument | result |
+|---|---|
+| Calibration-archive score, original weights | failed discriminant validity |
+| Same score, weights fitted to measured correlations | failed again, slightly worse |
+| Measured probe, 256 shots | Spearman **ρ = −0.072** |
+| Measured probe, 4096 shots, corrected aggregation | Spearman **ρ = −0.335** |
+| Raw published calibration across a known device change | explains ~17% of a five-fold regression, and predicts the bare arm backwards |
 
-**Headline finding.** Fine-tuning pulled both models toward the capability
-level embedded in the training data — from opposite directions. Qwen's trap
-detection came *down* (0.975 → 0.900, mild forgetting) while Mistral's came
-*up* (0.800 → 0.850, a gain): they converged toward the corpus. Format proved
-base-dependent: Mistral followed the output contract from the system prompt
-alone (base verdict rate 1.000), while Qwen needed the fine-tune to learn it
-(0.525 → 0.950). At n=40 a 0.05 delta is two questions, so the convergence is
-consistent but not statistically proven. The tuned models also show
-**complementary, uncorrelated blind spots** — Mistral strong where Qwen is
-weakest (frontier / meta / quantum), Qwen strong where Mistral slips
-(counterfactual) — which argues for running both as cross-checks rather than
-selecting one.
+A sixteen-fold improvement in probe precision did not help. The failure is
+structural, not a matter of instrument design.
 
-## Repository layout
+### Why: the target moves faster than the measurement
 
-```
-hf-critic/
-├── README.md              # this file
-├── experiments.md         # detailed run logs, findings, next steps
-├── prepare_corpus.py      # build unified ChatML corpus (own + external), pinned manifest
-├── reserve_holdout.py     # reserve stratified eval set (contamination firewall)
-├── train_critic.py        # QLoRA fine-tune; model-agnostic via --chat-template
-├── eval_critic.py         # before/after + model-vs-model scoring on the holdout
-├── export_gguf.py         # quantize merged model to GGUF for serving
-├── Modelfile              # Ollama config (system prompt + inference params)
-├── seed_examples.jsonl    # 38 hand-written critique examples (12 categories)
-├── eval_holdout.txt       # reserved HF-IQR question IDs — never trained on
-└── corpus/
-    └── manifest.json      # pinned dataset revisions + run config (reproducibility anchor)
-```
+Logical error is stable *within* a job (binomially consistent across six
+interleaved repeats) and moves roughly **31% across ten minutes**, with
+patch rankings collapsing over the same interval.
 
-Large artifacts (`outputs/`, `*.gguf`, generated corpus splits) are gitignored —
-the code and manifests reproduce them.
+### What did work — everything measured inside one job
 
-## Pipeline
+- **Break-even is state-dependent.** Against a duration-matched physical
+  qubit, the code suppresses logical bit-value error for |1⟩ (S = 1.5 to
+  2.4) and fails to for |0⟩ (S = 0.08 to 0.48). All twelve cells replicate
+  by direction across two windows 33 hours apart.
+- **The asymmetry is dose-dependent.** Across exposures of 9.6, 21.1 and
+  32.6 µs it rises monotonically (Spearman +1.00) — bare |1⟩ error grows
+  133% while bare |0⟩ stays flat, exactly as relaxation predicts.
+- **Feedforward correction works.** In-circuit correction beats offline
+  decoding of the same syndrome records at 20,480 shots per arm, every
+  interval excluding zero, and the benefit is attributable to the
+  correction rather than to the conditional-control path.
+- **Ratios survive drift that absolute rates do not.** Between windows,
+  bare and encoded error each moved 25–31%; their ratio moved 11%.
 
-| stage | script | output |
-|-------|--------|--------|
-| build corpus | `prepare_corpus.py` | unified ChatML JSONL + pinned `manifest.json` |
-| reserve eval set | `reserve_holdout.py` | `eval_holdout.txt` (stratified) |
-| train | `train_critic.py` | QLoRA adapter + merged 16-bit model |
-| evaluate | `eval_critic.py` | before/after scores, model-vs-model compare |
-| deploy | `export_gguf.py` + `Modelfile` | GGUF served via Ollama |
+---
 
-## Quickstart
+## Why this exists
 
-```bash
-# 1. build the training corpus (own examples + external mix)
-python prepare_corpus.py --out ./corpus --local seed_examples.jsonl
+This is the third study in the IRMB program, and the reason for all of it
+is the same: taking coursework and reading and turning it into something
+that actually runs on hardware.
 
-# 2. reserve the eval holdout — BEFORE training
-python reserve_holdout.py
+[Design 5](https://github.com/billyrdavis1985-bot/IRMB_Phase7G_Design5_QuantumCausality)
+hit calibration drift as a confound it could not isolate.
+[QNN-P1](https://github.com/billyrdavis1985-bot/IRMB_QNN-P1_DriftArchive_HardwareValidation)
+turned that drift into a measurement instrument: a Raspberry Pi 5 polling
+IBM's calibration API hourly since June 2026, now holding 707 unique
+cycles for one device and 786 for another. QEC-P1 asked whether that
+archive is good for anything beyond describing what already happened.
 
-# 3. train (Qwen shown; swap --model + --chat-template for Mistral)
-python train_critic.py --model unsloth/Qwen3-8B-unsloth-bnb-4bit \
-  --chat-template qwen3 --out outputs/critic-qwen3-8b --upsample 20
+The answer is no, in a specific and measurable way — and getting there
+required building a working distance-3 code with feedforward correction,
+which is the part no course teaches, because it is operational rather
+than theoretical.
 
-# 4. evaluate base vs tuned, or model vs model
-python eval_critic.py --model <path> --tag <name> --chat-template <tmpl>
-python eval_critic.py --compare <tag_a> <tag_b>
+---
 
-# 5. export for serving
-python export_gguf.py --model outputs/<run>/final --out outputs/<run>/gguf
-ollama create critic -f Modelfile && ollama run critic
-```
-
-The train and eval scripts are model-agnostic via `--chat-template` (`qwen3`,
-`mistral`); adding a base is a one-flag change plus a marker entry.
-
-## Reproducibility
-
-- **Pinned inputs.** `prepare_corpus.py` records exact dataset revisions in
-  `corpus/manifest.json`; every corpus is rebuildable from it.
-- **Contamination firewall.** The HF-IQR benchmark is reserved as the *eval
-  instrument* (`eval_holdout.txt`) and never used as training data, so the
-  before/after comparison is honest.
-- **Seeded runs.** Training and holdout selection are seeded.
-- **Controlled comparison.** The Qwen vs Mistral study holds corpus, config,
-  epochs, seed, and holdout constant; the only variable is the base model.
-
-## Methodology principles
-
-- **Held-out evaluation** — the benchmark is never in the training set.
-- **Honest deltas** — results reported base-vs-tuned and model-vs-model, with
-  regressions and tradeoffs stated, not hidden (e.g. the format-vs-capability
-  tradeoff, the frontier-reasoning role drift).
-- **Qualitative verification** — outputs are spot-read, not trusted on scorer
-  numbers alone; format adherence is not conflated with reasoning quality.
-- **Local upsampling** — the small hand-written set is weighted (not merely
-  concatenated) against the external data so it shapes behavior without being
-  drowned out.
-
-## Program lineage
-
-- **HF-IQR (V1-V3)** established the multi-model council methodology for
-  AI critique-behavior analysis and produced the reasoning benchmark reused here
-  as a held-out eval instrument:
-  [V1](https://github.com/billyrdavis1985-bot/-IRMB_HF-IQR_ReasoningBenchmark) ·
-  [V2](https://github.com/billyrdavis1985-bot/HF-IQR-V2-Hudson-Forge-Intelligence-and-Reasoning-Benchmark) ·
-  [V3](https://github.com/billyrdavis1985-bot/HF-IQR-V3).
-- **hf-critic** turns that analysis line into a *component*: distilling
-  critique behavior into small local models intended as specialist verification
-  reflexes for downstream agent work (Forge Agent / AURION) and the Hudson
-  Forge cluster.
-
-## Related IRMB repositories
-
-The reasoning benchmark used here as a held-out eval instrument:
-
-- [HF-IQR V1](https://github.com/billyrdavis1985-bot/-IRMB_HF-IQR_ReasoningBenchmark)
-- [HF-IQR V2](https://github.com/billyrdavis1985-bot/HF-IQR-V2-Hudson-Forge-Intelligence-and-Reasoning-Benchmark)
-- [HF-IQR V3](https://github.com/billyrdavis1985-bot/HF-IQR-V3)
-
-## Citation
+## What is in here
 
 ```
-Davis, B. (2026). hf-critic: Fine-tuned reasoning-process evaluators as
-local verification specialists. Hudson Forge Technologies LLC.
-https://github.com/billyrdavis1985-bot/hf-critic
+PAPER.md              full write-up
+PREREGISTRATION.md    staged preregistration, 8 amendments, 5 deviations
+REPRODUCE.md          how to re-run everything, by access level
+runs/README.md        every job ID with device, date and role
+runs/                 immutable counts and job stamps
+qec/                  the package (code, decoder, probes, runners, analysis)
+figures/              the four figures
+data/snapshots_*/     converted calibration archive (gitignored; see REPRODUCE)
 ```
+
+---
+
+## How this was done
+
+**Staged preregistration.** A Stage A engineering pilot with an explicit
+forbidden-analyses list — enforced in code, not left to discipline — then
+a Stage B commit fixing the matrix and the analysis model before any
+confirmatory run. Eight amendments and five deviations, each timestamped
+before the run it governs.
+
+**Gates that could fail, and did.** The probe-validity gate was applied to
+the probe method with the same threshold that had already killed the
+archive method. It failed twice. Those two runs cost 54 QPU-seconds
+between them and are the reason the rest of the study is interpretable.
+
+**Errors are published.** [Section 9 of PAPER.md](PAPER.md) lists seven,
+including a parser bug that made a hardware check read 0.9043 where the
+truth was 0.1582, a break-even result voided because a control arm was
+never duration-matched, a proposed mechanism refuted by the analysis that
+generated it, and an underpowered test whose null was briefly mistaken
+for a reversal.
+
+**Platform reality is in the record.** Over twelve days: an 83-hour
+fleet-wide calibration freeze, a backlog of 24,668 pending jobs that made
+one device unusable for a week, a transient authentication failure, and a
+maintenance window. The backend migration this forced is documented as a
+preregistration amendment, declared before any data on the new device was
+collected.
+
+---
+
+## Limitations, stated plainly
+
+Pilot estimation class — no confirmatory superiority claim is made
+anywhere. The policy comparison rests on three discordant sessions. All
+confirmatory sessions ran under a single frozen calibration cycle, so the
+pre-declared fresh-versus-stale analysis is not evaluable. The stability
+test covers two patches, not the stability of the ranking across eight,
+which is what selection actually depends on. Single device for the
+reported results. Every suppression figure is logical **bit-value** error
+in a computational-basis memory — no phase-coherence claim is made or
+implied.
+
+---
+
+## Next
+
+If prior measurement cannot track the device, the remaining option is
+measurement from inside the running computation. A repetition code
+already produces a syndrome stream at every round, on the same qubits, at
+the same moment, with no measure-to-act gap. This program has an unusual
+position from which to test it: an independent external telemetry stream,
+months long, to compare the internal record against.
+
+---
 
 ## License
 
-Apache 2.0. See [LICENSE](LICENSE).
-
----
-
-*Experiment. Measure. Refine. Repeat. — Hudson Forge Technologies · IRMB Research Program*
+MIT (code). Independent Research in Multi-agent Benchmarking (IRMB),
+Hudson Forge Technologies LLC — self-funded.
