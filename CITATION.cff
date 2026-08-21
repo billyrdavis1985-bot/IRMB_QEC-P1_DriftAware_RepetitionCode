@@ -1,0 +1,56 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "QEC-P1: Drift-Aware Repetition-Code Break-Even Study on IBM Heron"
+abstract: >-
+  A preregistered pilot study asking whether calibration information can be
+  used to choose where on a quantum processor to place a small
+  error-correcting code. Five instruments were tested on a 156-qubit IBM
+  Heron device using a distance-3 bit-flip repetition code: a longitudinal
+  calibration archive under two independently derived weightings, a short
+  measured probe at two precisions, and the raw published calibration
+  itself. None predicted the logical error rate. Within-session rank
+  correlations between probe score and measured logical error were -0.072
+  at 256 probe shots and -0.335 at 4096 shots with corrected aggregation.
+
+  A stability measurement accounts for all five failures: logical error is
+  binomially stable within a single job but moves roughly 31% across ten
+  minutes, with candidate patch rankings collapsing over the same interval.
+  Every instrument compares information gathered at one moment against
+  performance at another, and that interval is where the information is
+  lost.
+
+  Comparisons made within a single job survived, yielding two positive
+  results. Against a duration-matched physical qubit the code suppresses
+  logical bit-value error for the excited logical state (S = 1.5 to 2.4,
+  replicated across two windows) and fails to for the ground state
+  (S = 0.08 to 0.48), an asymmetry rising monotonically with exposure time.
+  In-circuit feedforward correction outperforms offline decoding of the
+  same syndrome records at 20,480 shots per arm, attributable to the
+  correction rather than the conditional-control path.
+
+  Includes the full staged preregistration with eight amendments and five
+  logged deviations, a job-level provenance record for all 26 hardware
+  jobs, and a published catalogue of errors found and corrected during the
+  study. Total quantum resource: 438 QPU-seconds.
+authors:
+  - family-names: Davis
+    given-names: "Billy R."
+    name-suffix: Jr.
+    affiliation: "Hudson Forge Technologies LLC"
+    orcid: "https://orcid.org/0009-0000-4807-5851"
+version: "1.0"
+date-released: "2026-08-21"
+license: MIT
+type: software
+repository-code: "https://github.com/billyrdavis1985-bot/IRMB_QEC-P1_DriftAware_RepetitionCode"
+keywords:
+  - quantum error correction
+  - repetition code
+  - quantum computing
+  - calibration drift
+  - IBM Quantum
+  - Qiskit
+  - preregistration
+  - reproducible research
+  - negative results
+  - NISQ
