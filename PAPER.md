@@ -79,8 +79,8 @@ candidate patches are ranked by short measured probes rather than by
 published metadata.
 
 Error correction raises the stakes on that inference. A distance-3 code
-spends five physical qubits, twenty-eight two-qubit gates and nine
-mid-circuit measurements to protect one logical bit. At current error
+spends five physical qubits, twenty-eight two-qubit gates, six
+mid-circuit measurements and six ancilla resets to protect one logical bit. At current error
 rates the overhead is comparable to the errors being corrected, so the
 question of *where* to place the code is not a marginal optimisation —
 it plausibly decides whether the code helps at all.
@@ -407,7 +407,7 @@ underwent maintenance and recalibrated. On the same patch, at the same
 round count, the encoded error rose roughly five-fold (0.0798 to 0.3530)
 while the bare arm stayed comparable (0.1339 to 0.1510). Bare circuits use
 only a delay and a terminal measurement; encoded circuits add 28
-two-qubit gates, 9 mid-circuit measurements and 6 resets. The change acted
+two-qubit gates, 6 mid-circuit measurements and 6 resets. The change acted
 on the encoded path.
 
 The published calibration explains part of it and mispredicts the rest.
@@ -685,3 +685,9 @@ its method.
   figures involved is what surfaced the omission. It is now section 4.8.
   A preregistered question requires a reported outcome even when that
   outcome is that the question can no longer be asked.
+- **A circuit description was wrong in two places.** The encoded
+  circuit was described as carrying nine mid-circuit measurements. It
+  carries six — three rounds of two ancilla measurements each — plus three
+  terminal measurements of the data qubits. Nine is the total measurement
+  count, not the mid-circuit count. Corrected in v1.2. No result depended
+  on the figure.
