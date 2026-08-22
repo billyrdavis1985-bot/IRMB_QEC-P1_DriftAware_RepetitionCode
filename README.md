@@ -1,6 +1,6 @@
 ﻿# QEC-P1 â€” Drift-Aware Repetition-Code Break-Even Study
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22050537.svg)](https://doi.org/10.5281/zenodo.22050537)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22050536.svg)](https://doi.org/10.5281/zenodo.22050536)
 
 **Can calibration data tell you where to put an error-correcting code?**
 
