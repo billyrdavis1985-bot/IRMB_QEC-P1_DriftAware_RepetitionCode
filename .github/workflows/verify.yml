@@ -1,0 +1,92 @@
+name: verify
+
+# Deliberately minimal. This is a research archive, not a maintained
+# library, so this workflow checks exactly one thing: that the repository
+# contains what its documentation says it contains, and that the offline
+# verification gates still pass.
+#
+# This exists because a real defect got past four review passes: two
+# modules that produced published results (qec/tier1_runner.py and
+# qec/diagnose_score.py) were developed and executed in Colab and were
+# never committed. REPRODUCE.md documented commands that could not run.
+# An import check would have caught it on the first push.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install qiskit==2.3.0 qiskit-aer==0.17.2 numpy scipy matplotlib
+
+      - name: Every module documented in REPRODUCE.md must import
+        run: |
+          python - <<'PY'
+          import importlib, pathlib, re, sys
+
+          doc = pathlib.Path("REPRODUCE.md").read_text(encoding="utf-8")
+          named = sorted(set(re.findall(r"qec\.(\w+)", doc)))
+          print(f"REPRODUCE.md references {len(named)} modules")
+
+          missing = []
+          for m in named:
+              try:
+                  importlib.import_module(f"qec.{m}")
+                  print(f"  ok      qec.{m}")
+              except Exception as e:
+                  print(f"  FAILED  qec.{m}: {type(e).__name__}: {e}")
+                  missing.append(m)
+
+          if missing:
+              print("\nModules referenced in documentation but not importable:")
+              for m in missing:
+                  print("  qec." + m)
+              sys.exit(1)
+          PY
+
+      - name: Tier 0 decoder verification (gate G2)
+        run: python -m qec.tier0 --verify
+
+      - name: Probe module self-test
+        run: python -m qec.probe --verify
+
+      - name: Analysis primitives
+        run: |
+          python - <<'PY'
+          from qec.analyze import wilson, spearman, enc_pL, bare_pL
+          lo, hi = wilson(5, 100)
+          assert 0.02 < lo < 0.023 and 0.11 < hi < 0.112, (lo, hi)
+          assert spearman([1,2,3,4],[1,2,3,4]) == 1.0
+          assert spearman([1,2,3,4],[4,3,2,1]) == -1.0
+          assert bare_pL({"0": 90, "1": 10}, 0) == (10, 100)
+          c = {"111 00 00 00": 80, "000 00 00 00": 20}
+          assert enc_pL(c, 1, False) == (20, 100)
+          print("analysis primitives ok")
+          PY
+
+      - name: Figures regenerate from committed run data
+        run: |
+          python make_figures.py
+          python - <<'PY'
+          import pathlib, sys
+          want = ["fig1_probe_fails.png", "fig2_stability.png",
+                  "fig3_breakeven.png", "fig4_e4_power.png"]
+          missing = [f for f in want
+                     if not pathlib.Path("figures", f).exists()]
+          if missing:
+              print("figures not produced:", missing); sys.exit(1)
+          print("all four figures regenerated")
+          PY

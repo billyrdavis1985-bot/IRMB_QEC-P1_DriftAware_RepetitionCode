@@ -1,0 +1,37 @@
+# QEC-P1 — the environment the published results were produced on.
+#
+# Python 3.11.9 (Windows) for hardware submission, compile gates and
+# analysis. Python 3.12 (Colab, Linux) for the Tier 1 simulation sweeps.
+# Both are recorded because the Aer crash documented in REPRODUCE.md
+# reproduced on BOTH, which is part of the evidence that it is not
+# environment-specific.
+#
+# NOTE ON PYTHON 3.11: qec/layouts.py and qec/tier1.py were written
+# against 3.12 and originally used multi-line expressions inside
+# f-strings (PEP 701), which 3.11 rejects. Those were patched. If you
+# see "SyntaxError: unterminated string literal", you are on a version
+# older than the fix.
+
+qiskit==2.3.0
+qiskit-aer==0.17.2
+qiskit-ibm-runtime==0.45.1
+numpy==2.3.5
+scipy==1.17.0
+matplotlib==3.11.1
+
+# qiskit-ibm-runtime is required only for:
+#   - hardware submission (qec/stage_a.py, stage_b.py, and the supplements)
+#   - the compile gate (qec/g5_compile.py)
+#   - retrieving results from completed jobs
+#   - check_stale.py and check_postmaint.py
+#
+# Everything else — Tier 0 verification, Tier 1 simulation, the probe
+# self-test, the analysis and the figures — runs without an IBM account
+# and without this package.
+
+# The Aer crash rate matters for reproduction. Sweeps on the versions
+# above showed 8.8% and 8.6% of Tier 1 cells terminating with a native
+# crash (exit -1073741819 on Windows, SIGSEGV on Linux). A markedly
+# different rate on other versions is worth reporting: it would bound
+# whether the process-isolation mitigation in qec/tier1_runner.py is
+# still necessary.
