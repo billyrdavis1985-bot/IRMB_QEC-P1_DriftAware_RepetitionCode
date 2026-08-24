@@ -1,4 +1,4 @@
-cff-version: 1.2.0
+﻿cff-version: 1.2.0
 message: "If you use this work, please cite it as below."
 title: "QEC-P1: Drift-Aware Repetition-Code Break-Even Study on IBM Heron"
 abstract: >-
@@ -38,8 +38,8 @@ authors:
     name-suffix: Jr.
     affiliation: "Hudson Forge Technologies LLC"
     orcid: "https://orcid.org/0009-0000-4807-5851"
-version: "1.1"
-date-released: "2026-08-21"
+version: "1.3"
+date-released: "2026-08-22"
 license: MIT
 type: software
 repository-code: "https://github.com/billyrdavis1985-bot/IRMB_QEC-P1_DriftAware_RepetitionCode"
@@ -54,3 +54,4 @@ keywords:
   - reproducible research
   - negative results
   - NISQ
+
