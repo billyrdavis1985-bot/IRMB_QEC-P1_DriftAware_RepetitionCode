@@ -691,3 +691,14 @@ its method.
   terminal measurements of the data qubits. Nine is the total measurement
   count, not the mid-circuit count. Corrected in v1.2. No result depended
   on the figure.
+- **Section 3's raw outputs were not preserved.** The Tier 1
+  sweeps ran in Colab after Aer proved unstable locally, and the JSON
+  files they produced were never retrieved before that session expired.
+  The omission was found in external review of the released repository,
+  which also found that the two modules producing those results had never
+  been committed at all. Both modules are now in the repository, and the
+  complete console output of both sweeps — all 432 conditions each — is
+  preserved in `notebooks/IRMB_QEC_P1.ipynb` with a parser in
+  `extract_tier1.py`. Recomputed deltas agree with the published values to
+  rounding. The raw counts remain unrecoverable, so Section 3's intervals
+  cannot be regenerated from this repository.

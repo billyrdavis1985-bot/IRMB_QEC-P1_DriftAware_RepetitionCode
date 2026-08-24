@@ -16,3 +16,7 @@ snapshots.zip
 
 *.code-workspace
 snapshots.zip
+
+fix*.py
+add*.py
+sync_release.py

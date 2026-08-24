@@ -49,6 +49,39 @@ suggests a different environment and is worth reporting.
 
 ---
 
+## Section 3 (Tier 1 simulation) — where the evidence lives
+
+The Tier 1 sweeps reported in Section 3 were executed in Google Colab,
+after Aer was found to crash on the local Windows environment. **The JSON
+outputs those runs produced were never retrieved from that session before
+it expired and are not in this repository.**
+
+What is preserved:
+
+| artifact | what it holds |
+|---|---|
+| `notebooks/IRMB_QEC_P1.ipynb` | the complete console output of both sweeps — all 432 conditions each, both gate evaluations, and the full feature-correlation table |
+| `runs/tier1_from_notebook.csv` | those per-cell results parsed into a table by `extract_tier1.py` |
+
+Re-derive the table yourself with:
+
+    python extract_tier1.py
+
+The script prints recomputed policy deltas alongside the published ones.
+They agree to rounding; two of twelve differ in the fourth decimal,
+because the console log carries p_L to four places while the original JSON
+held the underlying counts.
+
+**Consequence:** Section 3's per-cell values are auditable and its
+aggregate statistics are preserved verbatim in the notebook, but its raw
+count data is not in this repository. Confidence intervals cannot be
+recomputed from the CSV, only point values.
+
+Re-running Tier 1 from scratch is possible — `qec/tier1_runner.py` is
+committed — but requires the calibration archive, which is gitignored for
+size. The Aer crash is non-deterministic, so a fresh run will fail on a
+different subset of cells.
+
 ## What needs an IBM account but no quantum time
 
 | step | command |

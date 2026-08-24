@@ -75,6 +75,21 @@ marrakesh sessions — cross-session comparison requires one device.
 
 ---
 
+## Section 3 evidence is in the notebook, not in this directory
+
+The Tier 1 simulation sweeps ran in Google Colab. Their JSON outputs
+(`tier1_heldout.json`, `tier1_A1.json`, `tier1_partial.jsonl`,
+`score_diagnosis.json`) were not retrieved before the session expired and
+are **absent from this directory**.
+
+The complete console output of both sweeps — all 432 conditions each, the
+gate evaluations, and the feature-correlation table — is preserved in
+`notebooks/IRMB_QEC_P1.ipynb`. `runs/tier1_from_notebook.csv` holds those
+per-cell results parsed into a table, produced by `extract_tier1.py`.
+
+Point values are auditable; the underlying counts are not preserved, so
+confidence intervals cannot be recomputed from the CSV.
+
 ## Files that are superseded or void
 
 - **`session_11-14_counts.json` BARE cells.** `stage_b` called
