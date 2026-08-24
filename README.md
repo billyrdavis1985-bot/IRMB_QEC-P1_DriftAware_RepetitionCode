@@ -120,7 +120,7 @@ the probe method with the same threshold that had already killed the
 archive method. It failed twice. Those two runs cost 54 QPU-seconds
 between them and are the reason the rest of the study is interpretable.
 
-**Errors are published.** [Section 9 of PAPER.md](PAPER.md) lists nine,
+**Errors are published.** [Section 9 of PAPER.md](PAPER.md) lists ten,
 including a parser bug that made a hardware check read 0.9043 where the
 truth was 0.1582, a break-even result voided because a control arm was
 never duration-matched, a proposed mechanism refuted by the analysis that
@@ -165,4 +165,5 @@ months long, to compare the internal record against.
 
 MIT (code). Independent Research in Multi-agent Benchmarking (IRMB),
 Hudson Forge Technologies LLC â€” self-funded.
+
 
