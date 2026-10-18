@@ -77,13 +77,28 @@ def build_job(cands):
     return named
 
 
-def submit(window, snapshots):
+def pinned_candidates(stamp_file):
+    """Multiverse windows MUST deploy exactly the window-1 patches, in order.
+    Recomputing from the snapshot archive could silently pick a different set."""
+    stamp = json.load(open(stamp_file))
+    stamp = stamp.get("stamp", stamp)
+    cands = [tuple(c) for c in stamp["candidates"]]
+    if len(cands) != N_CANDIDATES:
+        raise SystemExit(f"pinned file has {len(cands)} candidates, expected {N_CANDIDATES}")
+    return cands
+
+
+def submit(window, snapshots, pin_from=None):
     from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
 
     svc = QiskitRuntimeService()
     be = svc.backend("ibm_marrakesh")
-    cycles = stage_b.load_cycles(snapshots)
-    cands = stage_b.candidate_patches(cycles, N_CANDIDATES)
+    if pin_from:
+        cands = pinned_candidates(pin_from)
+        print(f"candidates PINNED from {pin_from}")
+    else:
+        cycles = stage_b.load_cycles(snapshots)
+        cands = stage_b.candidate_patches(cycles, N_CANDIDATES)
     print(f"{len(cands)} candidates, all of them deployed:")
     for c in cands:
         print(f"   {c}")
@@ -108,6 +123,7 @@ def submit(window, snapshots):
              "probe_job_id": job_p.job_id(), "main_job_id": job_m.job_id(),
              "probe_shots": PROBE_SHOTS, "main_shots": MAIN_SHOTS,
              "rounds": ROUNDS, "state": STATE,
+             "pinned_from": pin_from,
              "submitted_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
     try:
         stamp["calibration_before"] = str(
@@ -224,13 +240,19 @@ def main():
     ap.add_argument("--submit", action="store_true")
     ap.add_argument("--retrieve", default=None)
     ap.add_argument("--window", type=int, default=1)
+    ap.add_argument("--pin-from", default=None,
+                    help="stamp/result JSON whose candidate list to reuse (multiverse windows)")
     ap.add_argument("--snapshots",
                     default="data/snapshots_marrakesh/*_converted.json")
     a = ap.parse_args()
 
     if a.dry_run:
-        cycles = stage_b.load_cycles(a.snapshots)
-        cands = stage_b.candidate_patches(cycles, N_CANDIDATES)
+        if a.pin_from:
+            cands = pinned_candidates(a.pin_from)
+            print(f"candidates PINNED from {a.pin_from}")
+        else:
+            cycles = stage_b.load_cycles(a.snapshots)
+            cands = stage_b.candidate_patches(cycles, N_CANDIDATES)
         n_p = len(cands) * 3
         n_m = len(cands)
         cs = n_p * PROBE_SHOTS + n_m * MAIN_SHOTS
@@ -253,7 +275,7 @@ def main():
     print(f"G6-EXTENDED window {a.window}. This SPENDS QPU TIME.")
     if input("type SUBMIT to proceed: ").strip() != "SUBMIT":
         raise SystemExit("aborted")
-    jf = submit(a.window, a.snapshots)
+    jf = submit(a.window, a.snapshots, a.pin_from)
     print("\nwaiting (Ctrl+C safe)...")
     time.sleep(5)
     retrieve(jf)
