@@ -136,3 +136,33 @@ Report the primary survival fraction and band whatever it is, including NOT
 SUPPORTED. No world is added or removed after the freeze without a logged
 amendment. Window 1 is committed as input; no survival number is written until
 windows 2 and 3 exist.
+
+## Amendment MV-A1 (2026-10-19, after window 2, before any window-3 data)
+
+What happened. Window 3 was submitted at 2026-10-19 19:12 ET after the
+preflight printed GO. The backend was in fact in maintenance
+(status 'maintenance', operational flag True, 1,356 pending jobs), and three
+pinned patches (10-11-12-13-14, 9-10-11-12-13, 8-9-10-11-12) showed a maximum
+qubit readout error of 0.434, against 0.032-0.034 in windows 1 and 2. Both jobs
+(dbba7s424mrc73bogtug, dbba7sc24mrc73bogu00) were cancelled while QUEUED. No
+window-3 data was returned or viewed.
+
+Why GO was wrong. The frozen preflight checked only the operational flag, not
+the status message, and flagged only errors >= 1.0. A 43% readout error passed
+as "ok". Running then would have measured a maintenance-period device with one
+failing qubit shared by three patches. A rank change from that is a hardware
+fault, not the drift the study tests.
+
+Changes (code: qec/mv_preflight.py).
+1. STOP unless backend status is 'active'.
+2. DEGRADED patch = any qubit readout error > 0.10 or any two-qubit error
+   > 0.05 (window 1/2 maxima: 0.034 / 0.004). DEGRADED is a STOP.
+3. On a DEGRADED STOP, wait for a later published calibration cycle and rerun
+   the preflight. If any pinned patch is still DEGRADED 7 days after
+   2026-10-19, submit window 3 anyway, and report the primary result twice: as
+   preregistered (all 54 worlds), and as a labeled sensitivity analysis with the
+   DEGRADED patches removed. The preregistered number stays primary.
+4. The 24-hour minimum separation from window 2 is unchanged; window 3 may be
+   later than that.
+
+Analysis, thresholds, world set and bands are unchanged.

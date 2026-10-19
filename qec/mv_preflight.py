@@ -5,12 +5,20 @@ Checks, against the live backend:
   2. calibration has CHANGED since the previous window (else it's not a new window)
   3. every pinned patch: no qubit or coupler reporting error >= 1.0 (IBM's
      'undefined/failed benchmark' value), and the worst readout / CZ error
+  4. (Amendment MV-A1) backend status must be 'active' -- 'maintenance' or
+     anything else is a STOP even when the operational flag is True
+  5. (Amendment MV-A1) DEGRADED patch: any qubit readout error > 0.10 or any
+     two-qubit error > 0.05 is a STOP (window 1/2 maxima were 0.034 / 0.004)
 
 Usage (from the repo root, in WSL):
     python -m qec.mv_preflight --pin-from runs/g6ext_1_result.json --previous runs/g6ext_1_result.json
 For window 3, pass --previous runs/g6ext_2_result.json
 """
 import argparse, json
+
+
+RO_DEGRADED = 0.10      # Amendment MV-A1
+CZ_DEGRADED = 0.05      # Amendment MV-A1
 
 
 def load_stamp(path):
@@ -38,6 +46,10 @@ def main():
     cal_ok = now_cal != prev_cal and now_cal != "n/a"
     print("  -> NEW calibration cycle" if cal_ok else "  -> SAME cycle: do NOT submit yet")
 
+    status_ok = str(st.status_msg).strip().lower() == "active"
+    if not status_ok:
+        print(f"  -> backend status is '{st.status_msg}', not 'active'")
+
     target = be.target
     gate = "cz" if "cz" in target.operation_names else "ecr"
     bad = []
@@ -59,6 +71,8 @@ def main():
             flags.append("ERROR>=1.0")
         if any(x is None for x in cz):
             flags.append("MISSING COUPLER")
+        if max(ro) > RO_DEGRADED or any(x is not None and x > CZ_DEGRADED for x in cz):
+            flags.append("DEGRADED")
         if flags:
             bad.append((patch, flags))
         cz_known = [x for x in cz if x is not None]
@@ -67,11 +81,14 @@ def main():
     print()
     if not st.operational:
         print("STOP: backend not operational")
+    elif not status_ok:
+        print(f"STOP: backend status is '{st.status_msg}'. Wait until it returns to 'active'")
+        print("and a calibration cycle after the maintenance has been published.")
     elif not cal_ok:
         print("STOP: calibration has not changed since the previous window")
     elif bad:
-        print("STOP: a pinned patch is broken on today's calibration. Do not drop or swap it")
-        print("on your own; record it and decide the handling before submitting.")
+        print("STOP: a pinned patch is broken or DEGRADED on today's calibration. Wait for a")
+        print("later calibration cycle (Amendment MV-A1). Do not drop or swap patches.")
     else:
         print("GO: all checks passed")
 
